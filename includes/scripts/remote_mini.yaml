@@ -1,0 +1,56 @@
+#=======================================================================
+#                           Обучение
+#=======================================================================
+
+# Аккустика
+learn_broadlink_acoustics:
+  sequence:
+    - service: remote.learn_command
+      data:
+        entity_id: remote.rm4c_mini_remote
+        device: acoustics
+        command:
+          - power
+          - mute
+          - input
+          - sound
+          - volume_up
+          - volume_down
+
+# Кондиционер системные      
+learn_broadlink_conditioner:
+  sequence:
+    - service: remote.learn_command
+      data:
+        entity_id: remote.rm4c_mini_remote
+        device: conditioner
+        command:
+          - off
+          
+# Телевизор LG
+learn_broadlink_tv_lg:
+  sequence:
+    - service: remote.learn_command
+      data:
+        entity_id: remote.rm4c_mini_remote
+        device: tv_lg
+        command:
+          - power
+          - volume_up
+          - volume_down
+          - mute
+          - ch_up
+          - ch_down
+          - ok
+          - left
+          - up
+          - down
+          - right
+          - back
+          - exit
+          - play
+          - pause
+          - red
+          - green
+          - yellow
+          - blue

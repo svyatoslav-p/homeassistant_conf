@@ -1,0 +1,147 @@
+media_kodi:
+#=======================================================================
+#                           Скрипты
+#=======================================================================
+  script:
+    #Вниз
+    kodi_down:
+      sequence:
+        - service: kodi.call_method
+          data:
+            entity_id: media_player.raspberrypi
+            method: Input.Down 
+    #Верх
+    kodi_up:
+      sequence:
+        - service: kodi.call_method
+          data:
+            entity_id: media_player.raspberrypi
+            method: Input.Up
+    #Лево
+    kodi_left:
+      sequence:
+        - service: kodi.call_method
+          data:
+            entity_id: media_player.raspberrypi
+            method: Input.Left
+    #Право
+    kodi_right:
+      sequence:
+        - service: kodi.call_method
+          data:
+            entity_id: media_player.raspberrypi
+            method: Input.Right
+    #Выбор
+    kodi_select:
+      sequence:
+        - service: kodi.call_method
+          data:
+            entity_id: media_player.raspberrypi
+            method: Input.Select
+    #Назад
+    kodi_back:
+      sequence:
+        - service: kodi.call_method
+          data:
+            entity_id: media_player.raspberrypi
+            method: Input.Back
+    #Домой
+    kodi_home:
+      sequence:
+        - service: kodi.call_method
+          data:
+            entity_id: media_player.raspberrypi
+            method: Input.Home
+    #Играть/Пауза
+    kodi_play_pause:
+      sequence:
+        - service: kodi.call_method
+          data:
+            entity_id: media_player.raspberrypi
+            method: Player.PlayPause
+            playerid: 1
+    #Стоп
+    kodi_stop:
+      sequence:
+        - service: kodi.call_method
+          data:
+            entity_id: media_player.raspberrypi
+            method: Player.Stop
+            playerid: 1
+    #OSD
+    kodi_show_osd:
+      sequence:
+        - service: kodi.call_method
+          data:
+            entity_id: media_player.raspberrypi
+            method: Input.ShowOSD
+    #Quit
+    kodi_quit:
+      sequence:
+        - service: kodi.call_method
+          data:
+            entity_id: media_player.raspberrypi
+            method: Application.Quit
+    # Перейти к списку каналов     
+    kodi_ch_list:
+      sequence:
+        - service: kodi.call_method
+          data:
+            entity_id: media_player.raspberrypi
+            method: Input.ShowOSD
+        - service: kodi.call_method
+          data:
+            entity_id: media_player.raspberrypi
+            method: Input.Right
+        - service: kodi.call_method
+          data:
+            entity_id: media_player.raspberrypi
+            method: Input.Right
+        - service: kodi.call_method
+          data:
+            entity_id: media_player.raspberrypi
+            method: Input.Select 
+    #========================================================================================================
+    # Проигрывание медиа контента
+    # 
+    # ПРИМЕЧАНИЕ:
+    # При использовании media_content_type: "CHANNEL" реальный номер
+    # канала не соответсвует номеру в базе KODI. Для того, что бы узнать номер канала в KODI необходимо:
+    # 1. Открыть базу данных /home/user/.kodi/userdata/Database/TVxx.db
+    #    Открыть можно с помощью RazorSQL экспортировав базу в читаемый формат
+    #    Правой кнопкой мыши на выбранной базе->Export tables. Далее выбрать формат (exel) и папку экпорта
+    # 2. Колонка idChannel и есть реальный номер канала
+    #========================================================================================================
+    
+    # Включение канала при возвращении домой с работы
+    kodi_tv_ch_returned_home_from_work:
+      sequence:
+        - alias: Kodi play TV channel
+          service: media_player.play_media
+          data_template:
+            entity_id: media_player.raspberrypi
+            # The type of the content to play. Must be one of MUSIC, TVSHOW, VIDEO, EPISODE, CHANNEL or PLAYLIST
+            media_content_type: "CHANNEL"
+            # MTV Rocks
+            media_content_id: 122
+
+    # Быстрое включение ТВ
+    kodi_tv_ch_fast_play:
+      sequence:
+        - service: media_player.play_media
+          data_template:
+            entity_id: media_player.raspberrypi
+            media_content_type: "CHANNEL"
+            # Paramount Comedy HD
+            media_content_id: 122
+
+    # Запуск Kodi Shell Command
+    kodi_run:
+      sequence:
+        - service: shell_command.kodi_run
+  #=======================================================================
+  #                           Shell Command
+  #=======================================================================
+  shell_command:
+    # Запуск Kodi
+    kodi_run: ssh pi@192.168.1.69 'kodi-standalone'

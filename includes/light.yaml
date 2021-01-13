@@ -1,0 +1,153 @@
+#=======================================================================
+#                         Подсветка MiLight
+#=======================================================================
+
+- platform: limitlessled
+  bridges:
+    - host: 192.168.1.147
+      groups:
+      - number: 1
+        name: Led_bedroom
+        type: rgbww
+      - number: 2
+        type: rgbww
+        name: Lamp_bedroom
+      - number: 3
+        type: rgbww
+        name: Led_kitchen
+
+#=======================================================================
+#                    Светильники Philips Zhirui
+#=======================================================================
+
+# Кухня светильник 1
+- platform: xiaomi_miio
+  name:  kitchen_spotlight_1
+  host: 192.168.1.67
+  token: !secret kitchen_spot_1_token
+  model: philips.light.downlight
+
+# Кухня светильник 2
+- platform: xiaomi_miio
+  name: kitchen_spotlight_2
+  host: 192.168.1.41
+  token: !secret kitchen_spot_2_token
+  model: philips.light.downlight
+
+# Ванная светильник 1
+- platform: xiaomi_miio
+  name: bathroom_spotlight_1
+  host: 192.168.1.135
+  token: !secret bathroom_spot_1_token
+  model: philips.light.downlight
+
+# Ванная светильник 2
+- platform: xiaomi_miio
+  name: bathroom_spotlight_2
+  host: 192.168.1.47
+  token: !secret bathroom_spot_2_token
+  model: philips.light.downlight
+
+# Ванная светильник 3
+- platform: xiaomi_miio
+  name: bathroom_spotlight_3
+  host: 192.168.1.98
+  token: !secret bathroom_spot_3_token
+  model: philips.light.downlight
+
+# Прихожая светильник 1
+- platform: xiaomi_miio
+  name: hallway_spotlight_1
+  host: 192.168.1.49
+  token: !secret hallway_spot_1_token
+  model: philips.light.downlight
+
+# Прихожая светильник 2
+- platform: xiaomi_miio
+  name: hallway_spotlight_2
+  host: 192.168.1.140
+  token:  !secret hallway_spot_2_token
+  model: philips.light.downlight
+
+# Прихожая светильник 3
+- platform: xiaomi_miio
+  name: hallway_spotlight_3
+  host: 192.168.1.145
+  token:  !secret hallway_spot_3_token
+  model: philips.light.downlight
+
+#=======================================================================
+#                         Группы освещения
+#=======================================================================
+
+# Кухня
+- platform: group
+  name: kitchen_spotlight_group
+  entities:
+    - light.kitchen_spotlight_1
+    - light.kitchen_spotlight_2
+
+# Ванна
+- platform: group
+  name: bathroom_spotlight_group
+  entities:
+    - light.bathroom_spotlight_1
+    - light.bathroom_spotlight_2
+    - light.bathroom_spotlight_3
+
+# Прихожая
+- platform: group
+  name: hallway_spotlight_group
+  entities:
+    - light.hallway_spotlight_1
+    - light.hallway_spotlight_2
+    - light.hallway_spotlight_3
+    
+# Прихожая и кухня
+- platform: group
+  name: hallway_and_kitchen_spotlight_group
+  entities:
+    - light.hallway_spotlight_1
+    - light.hallway_spotlight_2
+    - light.hallway_spotlight_3
+    - light.kitchen_spotlight_1
+    - light.kitchen_spotlight_2
+
+# Все точечные светильники
+- platform: group
+  name: all_spotlights_group
+  entities:
+    - light.hallway_spotlight_1
+    - light.hallway_spotlight_2
+    - light.hallway_spotlight_3
+    - light.kitchen_spotlight_1
+    - light.kitchen_spotlight_2
+    - light.bathroom_spotlight_1
+    - light.bathroom_spotlight_2
+    - light.bathroom_spotlight_3 
+
+# Все источники света   
+- platform: group
+  name: all_light_group
+  entities:
+    - light.all_spotlights_group
+    - light.lamp_bedroom
+    - light.led_bedroom
+    - light.led_kitchen
+    - light.sw_kitchen_lamp
+    - light.sw_loggia
+#=======================================================================
+#                 Выключатели Aqara в домене LIGHT
+#=======================================================================
+
+# Кухня люстра
+- platform: switch
+  name: sw_kitchen_lamp
+  entity_id: switch.sw_double_kitchen_switch_left
+
+# Лоджия
+- platform: switch
+  name: sw_loggia
+  entity_id: switch.sw_single_loggia_switch
+
+

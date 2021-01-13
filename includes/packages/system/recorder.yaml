@@ -1,0 +1,52 @@
+recorder:
+  #=======================================================================
+  #                       Настройка БД
+  #=======================================================================
+  recorder:
+    db_url: sqlite:////config/ha_v2.db
+    purge_keep_days: 5
+    include:
+      domains:
+        - switch
+        - light
+      entities: 
+        #Сенсоры системы
+        - sensor.memory_use_percent
+        - sensor.cpu_temp
+        - sensor.processor_use
+        - sensor.memory_use_percent
+      
+        #Датчик ванна температра, влажность
+        - sensor.sn_tempr_hum_bathroom_temperature
+        - sensor.sn_tempr_hum_bathroom_humidity
+      
+        #Датчики протечки
+        - binary_sensor.sn_water_sink_kitchen_water_leak
+        - binary_sensor.sn_water_sink_bathroom_water_leak
+        - binary_sensor.sn_water_sink_bathroom_2_water_leak
+      
+        #Датчик спальня температра, влажность, давление
+        - sensor.sn_tempr_hum_bedroom_humidity
+        - sensor.sn_tempr_hum_bedroom_pressure_mmhg
+        - sensor.sn_tempr_hum_bedroom_temperature
+      
+        # Другие датчики, сенсоры
+        - binary_sensor.sn_entrance_door_contact
+        - binary_sensor.sn_occupancy_hallway_motion
+      
+  #=======================================================================
+  #                       Автоматизации
+  #=======================================================================
+  automation:
+    
+    # Автоматическое сжатие базы данных
+    - alias: sys_purge_everyday
+      initial_state: true
+      trigger:
+        - platform: time
+          at: '01:00:00'
+      action:
+        - service: recorder.purge
+          data:
+              keep_days: 3
+              repack: true

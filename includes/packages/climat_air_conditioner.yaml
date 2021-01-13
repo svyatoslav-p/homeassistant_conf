@@ -1,0 +1,64 @@
+climat_air_conditioner:
+
+#=======================================================================
+#                        Климат
+#=======================================================================
+  climate:
+    # Кондиционер
+    - platform: smartir
+      name: air_conditioner
+      unique_id: air_conditioner_bedroom
+      device_code: 1180
+      controller_data: remote.rm4c_mini_remote
+      temperature_sensor: sensor.sn_tempr_hum_bedroom_temperature
+      humidity_sensor: sensor.sn_tempr_hum_bedroom_humidity
+      power_sensor: binary_sensor.sn_stat_conditioner_contact
+
+#=======================================================================
+#                       Автоматизация
+#=======================================================================
+  automation:
+    # Выключение кондиционера по таймеру
+    - alias: climat_conditioner_off_timer
+      initial_state: true
+      trigger:
+        - platform: event
+          event_type: timer.finished
+          event_data:
+            entity_id: timer.break_air_conditioning
+      action:
+        - service: timer.cancel
+          entity_id: timer.break_air_conditioning
+        - service: climate.turn_off
+          entity_id: climate.air_conditioner   
+
+#=======================================================================
+#                           Скрипты
+#=======================================================================
+  script:
+    # Запуск таймера выключения кондиционера
+    start_timer_break_air_conditioning:
+      sequence:
+        - service: timer.start
+          entity_id: timer.break_air_conditioning
+          data:
+            duration: "{{ states('input_datetime.air_conditioner_time_work') }}"
+            
+    # Остановка таймера выключения кондиционера
+    stop_timer_break_air_conditioning:
+      sequence:
+        - service: timer.cancel
+          entity_id: timer.break_air_conditioning
+#=======================================================================
+#                           Таймеры
+#=======================================================================
+  timer:
+    break_air_conditioning:
+
+#=======================================================================
+#                           Input Datetime
+#=======================================================================
+  input_datetime:
+    air_conditioner_time_work:
+      has_date: false
+      has_time: true

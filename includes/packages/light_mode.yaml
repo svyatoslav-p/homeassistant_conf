@@ -1,0 +1,374 @@
+light_mode:
+#=======================================================================
+#                       Автоматизации
+#=======================================================================
+  automation:
+
+    # Управление освещением
+    - alias: light_toggle_rooms
+      initial_state: true
+      trigger:
+        # Выключатели
+        - platform: state
+          entity_id: sensor.sw_double_hallway_action
+          to: 'button_2_single'
+        - platform: state
+          entity_id: sensor.sw_double_hallway_action
+          to: 'button_1_single'
+        - platform: state 
+          entity_id: sensor.sw_double_kitchen_action
+          to: 'button_2_single'
+        - platform: state
+          entity_id: sensor.sw_single_bedroom_action
+          to: 'single'
+      mode: parallel
+      action:
+        - choose:
+            # Выключатель Ванна
+            - conditions: 
+                - "{{ trigger.entity_id == 'sensor.sw_double_hallway_action' }}"
+                - "{{ trigger.to_state.state == 'button_2_single' }}"
+              sequence:              
+                - service: script.turn_on
+                  entity_id: script.light_toggle_rooms
+                  data:
+                    variables:
+                      entity_id_toggle: >
+                        {% if is_state('input_text.time_light_mode', 'Сон') and is_state('light.bathroom_spotlight_group', 'on') %}
+                          light.bathroom_spotlight_group
+                        {% elif is_state('input_text.time_light_mode', 'Сон') %}
+                          light.bathroom_spotlight_2
+                        {% else %}
+                          light.bathroom_spotlight_group
+                        {% endif %}
+            # Выключатель Прихожая
+            - conditions: 
+                - "{{ trigger.entity_id == 'sensor.sw_double_hallway_action' }}"
+                - "{{ trigger.to_state.state == 'button_1_single' }}"
+              sequence:              
+                - service: script.turn_on
+                  entity_id: script.light_toggle_rooms
+                  data:
+                    variables:
+                      entity_id_toggle: >
+                        {% if is_state('input_text.time_light_mode', 'Сон') and is_state('light.hallway_spotlight_group', 'on') %}
+                          light.hallway_spotlight_group
+                        {% elif is_state('input_text.time_light_mode', 'Сон') %}
+                          light.hallway_spotlight_2
+                        {% else %}
+                          light.hallway_spotlight_group
+                        {% endif %}
+            # Выключатель Кухня
+            - conditions: 
+                - "{{ trigger.entity_id == 'sensor.sw_double_kitchen_action' }}"
+                - "{{ trigger.to_state.state == 'button_2_single' }}"
+              sequence:              
+                - service: script.turn_on
+                  entity_id: script.light_toggle_rooms
+                  data:
+                    variables:
+                      entity_id_toggle: >
+                        {% if is_state('input_text.time_light_mode', 'Сон') and is_state('light.kitchen_spotlight_group', 'on') %}
+                          light.kitchen_spotlight_group
+                        {% elif is_state('input_text.time_light_mode', 'Сон') %}
+                          light.kitchen_spotlight_2
+                        {% else %}
+                          light.kitchen_spotlight_group
+                        {% endif %}
+            # Выключатель Спальня
+            - conditions: 
+                - "{{ trigger.entity_id == 'sensor.sw_single_bedroom_action' }}"
+                - "{{ trigger.to_state.state == 'single' }}"
+              sequence:              
+                - service: script.turn_on
+                  entity_id: script.light_toggle_rooms
+                  data:
+                    variables:
+                      entity_id_toggle: light.lamp_bedroom
+          default:
+            - service: notify.telegram
+              data:
+                message: |
+                  *Тип:* {{ "\U0001F6A7" }} Системное уведомление   
+                  *Время:* {{ states('sensor.time_date')}}
+                  *Сообщение:*
+                  {{ "\U0000274C" }}Не удалось обработать действия автоматизации: *light_toggle_rooms*
+
+    # Установка режима освещения в автоматическом и ручном режимах
+    - alias: set_light_mode
+      initial_state: true
+      trigger:
+        - platform: homeassistant
+          event: start
+        - platform: time
+          at:
+            - input_datetime.light_mode_day
+            - input_datetime.light_mode_night
+            - input_datetime.light_mode_sleep
+        - platform: state
+          entity_id: input_select.light_mode
+        - platform: state
+          entity_id: input_boolean.update_light_mode
+      mode: restart
+      action:
+        - delay: 00:00:01
+        - choose:
+            # Выбор режима в ручную (GUI)
+            - conditions: 
+                - "{{ trigger.entity_id == 'input_select.light_mode' }}"
+              sequence:  
+                - service: input_text.set_value
+                  data:
+                    entity_id: input_text.time_light_mode
+                    value: "{{ states('input_select.light_mode') }}"
+            # Режим ДЕНЬ
+            - conditions: 
+                condition: time
+                after: input_datetime.light_mode_day
+                before: input_datetime.light_mode_night
+              sequence:  
+                - service: input_text.set_value
+                  data:
+                    entity_id: input_text.time_light_mode
+                    value: "День"   
+            # Режим НОЧЬ
+            - conditions: 
+                condition: time
+                after: input_datetime.light_mode_night
+                before: input_datetime.light_mode_sleep
+              sequence:  
+                - service: input_text.set_value
+                  data:
+                    entity_id: input_text.time_light_mode
+                    value: "Ночь"  
+            # Режим СОН
+            - conditions: 
+                condition: time
+                after: input_datetime.light_mode_sleep
+                before: input_datetime.light_mode_day
+              sequence:  
+                - service: input_text.set_value
+                  data:
+                    entity_id: input_text.time_light_mode
+                    value: "Сон" 
+          default:
+            - service: notify.telegram
+              data:
+                message: |
+                  *Тип:* {{ "\U0001F6A7" }} Системное уведомление   
+                  *Время:* {{ states('sensor.time_date')}}
+                  *Сообщение:*
+                  {{ "\U0000274C" }}Не удалось обработать действия автоматизации: *set_light_mode*
+        # Обновим значение текущей яркости         
+        - service: input_number.set_value
+          data:
+            entity_id: input_number.light_brightness_mode
+            value: >
+              {% if is_state('input_text.time_light_mode', 'День') %} {{ states('input_number.light_day_brightness')|int }}
+              {% elif is_state('input_text.time_light_mode', 'Ночь') %} {{ states('input_number.light_night_brightness')|int }}
+              {% elif is_state('input_text.time_light_mode', 'Сон') %} {{ states('input_number.light_sleep_brightness')|int }}
+              {% endif %}
+        # Обновим значение текущей световой температуры 
+        - service: input_number.set_value
+          data:
+            entity_id: input_number.light_kelvin_mode
+            value: >
+              {% if is_state('input_text.time_light_mode', 'День') %} {{ states('input_number.light_day_kelvin')|int }}
+              {% elif is_state('input_text.time_light_mode', 'Ночь') %} {{ states('input_number.light_night_kelvin')|int }}
+              {% elif is_state('input_text.time_light_mode', 'Сон') %} {{ states('input_number.light_sleep_kelvin')|int }}
+              {% endif %}
+        # Обновим параметры для уже включенных источников
+        - choose:
+          - conditions: "{{ is_state('input_boolean.auto_update_light_devices_on', 'on') }}"
+            sequence:
+              - service: script.turn_on
+                entity_id: script.update_light_devices_on
+#=======================================================================
+#                           Скрипты
+#=======================================================================
+  script:
+    # Обработка заданий от автоматизации "light_toggle_rooms"
+    light_toggle_rooms:
+      fields:
+        entity_id_toggle:
+          example: 'default_state'
+      mode: parallel
+      sequence:
+        - choose:
+            # Выключить освещение
+            - conditions: "{{ states(entity_id_toggle) == 'on' }}"
+              sequence:
+                - service: light.turn_off
+                  data:
+                    entity_id: "{{ entity_id_toggle }}"
+            # Включить освещение
+            - conditions: 
+                - "{{ states(entity_id_toggle) == 'off' }}"
+              sequence:
+                - service: light.turn_on
+                  data:
+                    entity_id: "{{ entity_id_toggle }}"
+                    brightness_pct: "{{ states('input_number.light_brightness_mode') | int }}"
+                    color_temp: >
+                      {% if entity_id_toggle == 'light.lamp_bedroom' %} {{ states('input_number.light_kelvin_mode') | int - 20 }}
+                      {% else %} {{ states('input_number.light_kelvin_mode') | int }}
+                      {% endif %}
+          default:
+            - service: notify.telegram
+              data:
+                message: |
+                  *Тип:* {{ "\U0001F6A7" }} Системное уведомление   
+                  *Время:* {{ states('sensor.time_date')}}
+                  *Сообщение:*
+                  {{ "\U0000274C" }}Не удалось обработать действия скрипта: *light_toggle_rooms*
+
+    # Актуализировать параметры освещения для включенных ламп(светильников)      
+    update_light_devices_on:
+      mode: single
+      sequence:
+        # Точечные светильники
+        - choose:
+          - conditions:
+              condition: or
+              conditions:
+                - "{{ is_state('light.kitchen_spotlight_group', 'on') }}"
+                - "{{ is_state('light.hallway_spotlight_group', 'on') }}"
+                - "{{ is_state('light.bathroom_spotlight_group', 'on') }}"
+            sequence:
+              - service: light.turn_on
+                data:
+                  entity_id: | 
+                    {% set white_list =  ['light.kitchen_spotlight_group',
+                                          'light.hallway_spotlight_group','light.bathroom_spotlight_group'] %}
+                    {{ states.light|selectattr('state','eq','on')
+                                   |selectattr('entity_id','in',white_list)
+                                   |map(attribute='entity_id')
+                                   |join(', ') }}
+                  brightness_pct: "{{ states('input_number.light_brightness_mode') | int }}"
+                  color_temp: "{{ states('input_number.light_kelvin_mode') | int }}"
+        # Люстра в зале
+        - choose:
+          - conditions: "{{ is_state('light.lamp_bedroom', 'on') }}"
+            sequence:
+              - service: light.turn_on
+                entity_id: light.lamp_bedroom 
+                data:
+                  brightness_pct: "{{ states('input_number.light_brightness_mode') | int }}"
+                  color_temp: "{{ states('input_number.light_kelvin_mode') | int - 20 }}"
+
+#=======================================================================
+#                           Input Boolean
+#=======================================================================         
+  input_boolean:
+
+    # Обновить параметры принудительно
+    update_light_mode:
+      icon: mdi:autorenew
+    
+    # Автоматически обновить включенные световые устройства
+    auto_update_light_devices_on:
+      icon: mdi:autorenew
+
+#=======================================================================
+#                        Input Select
+#=======================================================================
+  input_select:
+    # Выбор режима освещения через GUI
+    light_mode:
+      options:
+        - Выбрать
+        - День
+        - Ночь
+        - Сон
+      initial: 'Выбрать'
+#=======================================================================
+#                        Input Number
+#=======================================================================
+  input_number:
+    
+    # Активное значение яркости
+    light_brightness_mode:
+      min: 10
+      max: 100
+      step: 5
+      unit_of_measurement: '%'
+      mode: slider
+
+    # Яркость ДЕНЬ
+    light_day_brightness:
+      min: 10
+      max: 100
+      step: 5
+      unit_of_measurement: '%'
+      mode: slider
+
+    # Яркость НОЧЬ
+    light_night_brightness:
+      min: 10
+      max: 100
+      step: 5
+      unit_of_measurement: '%'
+      mode: slider
+
+    # Яркость СОН
+    light_sleep_brightness:
+      min: 10
+      max: 100
+      step: 5
+      unit_of_measurement: '%'
+      mode: slider
+    
+    # Активное значение световой температуры
+    light_kelvin_mode:
+      min: 175
+      max: 333
+      step: 5
+      mode: slider
+
+    # Световая температура ДЕНЬ
+    light_day_kelvin:
+      min: 175
+      max: 333
+      step: 5
+      mode: slider
+    
+    # Световая температура НОЧЬ
+    light_night_kelvin:
+      min: 175
+      max: 333
+      step: 5
+      mode: slider
+
+    # Световая температура СОН
+    light_sleep_kelvin:
+      min: 175
+      max: 333
+      step: 5
+      mode: slider
+#=======================================================================
+#                             Input Text
+#=======================================================================
+  input_text:
+
+    # Режим освещения
+    time_light_mode:
+
+#=======================================================================
+#                           Input Datetime
+#=======================================================================
+  input_datetime:
+
+    # Начало режима ДЕНЬ
+    light_mode_day:
+      has_date: false
+      has_time: true
+
+    # Начало режима НОЧЬ
+    light_mode_night:
+      has_date: false
+      has_time: true
+
+    # Начало режима СОН
+    light_mode_sleep:
+      has_date: false
+      has_time: true

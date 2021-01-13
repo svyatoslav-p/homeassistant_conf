@@ -1,0 +1,123 @@
+#***********************************************************************
+#                     ZigBee list name
+#                 
+#  1. 0x00158d000407ed28 - bt_double_wireless_hallway
+#                             sensor.bt_double_wireless_hallway_action
+#                             sensor.bt_double_wireless_hallway_battery
+#  2. 0x00158d00035c1ce1 - sw_single_bedroom
+#                             sensor.sw_single_bedroom_action
+#                             switch.sw_single_bedroom_switch
+#  3. 0x00158d00022393c6 - sw_double_hallway
+#                             sensor.sw_double_hallway_action
+#                             switch.sw_double_hallway_switch_right
+#                             switch.sw_double_hallway_switch_left
+#  4. 0x00158d0002239421 - sw_double_kitchen
+#                             sensor.sw_double_kitchen_action
+#                             switch.sw_double_kitchen_switch_left
+#                             switch.sw_double_kitchen_switch_right
+#  5. 0x00158d000358fed0 - sw_single_loggia
+#                             sensor.sw_single_loggia_action
+#                             switch.sw_single_loggia_switch
+#  6. 0x00158d00022393ca - sw_double_hood_fan
+#                             sensor.sw_double_hood_fan_action
+#                             switch.sw_double_hood_fan_switch_left
+#  7. 0x00158d0003cb910e - rl_cold_water
+#                             sensor.rl_cold_water_action
+#                             sensor.rl_cold_water_consumption
+#                             sensor.rl_cold_water_power
+#                             switch.rl_cold_water_switch_l1
+#                             switch.rl_cold_water_switch_l2
+#  8. 0x00158d000396eb5e - rl_hot_water
+#                             sensor.rl_hot_water_action
+#                             sensor.rl_hot_water_consumption
+#                             sensor.rl_hot_water_power
+#                             switch.rl_hot_water_switch_l1
+#                             switch.rl_hot_water_switch_l2
+#  9. 0x00158d00040c3580 - sn_entrance_door
+#                             sensor.sn_entrance_door_battery
+#                             binary_sensor.sn_entrance_door_contact
+# 10. 0x00158d00045149af - sn_occupancy_hallway
+#                             sensor.sn_occupancy_hallway_battery
+#                             sensor.sn_occupancy_hallway_illuminance
+#                             binary_sensor.sn_occupancy_hallway_motion
+# 11. 0x00158d0004661da6 - sn_tempr_hum_bathroom
+#                             sensor.sn_tempr_hum_bathroom_battery
+#                             sensor.sn_tempr_hum_bathroom_humidity
+#                             sensor.sn_tempr_hum_bathroom_temperature
+# 12. 0x00158D00028AA188 - sn_stat_conditioner
+#                             sensor.sn_stat_conditioner_battery
+#                             binary_sensor.sn_stat_conditioner_contact
+# 13. 0x00158D00053DF814 - sn_tempr_hum_bedroom
+#                             sensor.sn_tempr_hum_bedroom_battery
+#                             sensor.sn_tempr_hum_bedroom_humidity
+#                             sensor.sn_tempr_hum_bedroom_pressure
+#                             sensor.sn_tempr_hum_bedroom_temperature
+# 14. 0x00158D00047F891B - sn_water_sink_bathroom
+#                             sensor.sn_water_sink_bathroom_battery
+#                             binary_sensor.sn_water_sink_bathroom_water_leak
+# 15. 0x00158D00049DE3F4 - sn_water_sink_kitchen
+#                             sensor.sn_water_sink_kitchen_water_battery
+#                             binary_sensor.sn_water_sink_kitchen_water_leak
+# 16. 0x0000000000000000 - sn_water_sink_bathroom_2
+#                             sensor.sn_water_sink_bathroom_2_water_battery
+#                             binary_sensor.sn_water_sink_bathroom_2_water_leak
+#***********************************************************************
+
+#=======================================================================
+#                         Выключатели без нуля
+#=======================================================================
+
+#Прихожая, кухня
+switch.sw_double_hallway_switch_left:
+  friendly_name: Прихожая
+  icon: mdi:light-switch
+
+switch.sw_double_hallway_switch_right:
+  friendly_name: Ванна
+  icon: mdi:light-switch
+
+#Вытяжка
+switch.sw_double_hood_fan_switch_left:
+  friendly_name: Вытяжка ванна
+  icon: mdi:light-switch
+
+#Кухня светильники, люстра
+switch.sw_double_kitchen_switch_left:
+  friendly_name: Кухня люстра
+  icon: mdi:light-switch
+
+switch.sw_double_kitchen_switch_right:
+  friendly_name: Кухня светильники
+  icon: mdi:light-switch
+
+#Лоджия одиночный
+switch.sw_single_loggia_switch:
+  friendly_name: Лоджия
+  icon: mdi:light-switch
+
+#Спальня одиночный
+switch.0x00158d00035c1ce1_switch:
+  friendly_name: Спальня
+  icon: mdi:light-switch
+
+#=======================================================================
+#                               Реле
+#=======================================================================
+
+# Реле холодная вода
+switch.rl_cold_water_switch_l1:
+  friendly_name: Закрыть холодную воду
+  icon: mdi:water-pump-off
+
+switch.rl_cold_water_switch_l2:
+  friendly_name: Открыть холодную воду
+  icon: mdi:water-pump
+
+# Реле горячая вода
+switch.rl_hot_water_switch_l1:
+  friendly_name: Закрыть горячую воду
+  icon: mdi:water-pump-off
+
+switch.rl_hot_water_switch_l2:
+  friendly_name: Открыть горячую воду
+  icon: mdi:water-pump

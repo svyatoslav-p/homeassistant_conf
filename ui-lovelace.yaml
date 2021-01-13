@@ -1,0 +1,1307 @@
+title: Home Assistant - сервер
+views:
+#=======================================================================
+#                           Система  
+#=======================================================================
+  - title: Система
+    icon: mdi:home-assistant
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: '**Home Assistant**'
+          - type: grid
+            columns: 4
+            square: false
+            cards:
+              - type: custom:button-card
+                name: Сервер HA
+                icon: mdi:restart
+                styles:
+                  card:
+                    - font-size: 12px
+                tap_action:
+                  action: call-service
+                  service: homeassistant.restart
+              - type: custom:button-card
+                name: Выкл все
+                icon: mdi:sleep
+                styles:
+                  card:
+                    - font-size: 12px
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.all_turn_off_dev
+              - type: custom:button-card
+                name: Статус unavailable
+                icon: mdi:exclamation-thick
+                styles:
+                  card:
+                    - font-size: 12px
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.check_devices_status_unavailable
+              - type: custom:button-card
+                name: Перезапуск системы
+                icon: mdi:autorenew
+                styles:
+                  card:
+                    - font-size: 12px
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.restore_system_after_off
+          - type: glance
+            entities:
+              - entity: sensor.online_custom
+                name: Онлайн
+                icon: mdi:clock
+              - entity: sensor.current_ha
+                name: Установлен
+                icon: mdi:alpha-v-circle
+              - entity: sensor.version
+                name: Доступен
+                icon: mdi:alpha-v-circle-outline
+            show_name: true
+            show_state: true
+            state_color: false
+            show_icon: true
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: sensor.last_google_backup_train
+                name: Последняя копия
+              - entity: sensor.snapshots_in_google_drive_train
+                name: Копий в google drive
+                icon: mdi:folder-google-driv
+              - entity: sensor.snapshots_in_hassio_train
+                name: Копий локальных
+              - type: divider
+              - entity: sensor.total_entities
+                name: Сущностей
+              - entity: sensor.sensor_count
+                name: Сенсоров
+              - entity: sensor.binary_sensor_count
+                name: Бинарных сенсоров
+              - entity: sensor.automation_count
+                name: Автоматизаций
+              - entity: sensor.automation_count_on
+                name: Активных автоматизаций
+              - entity: sensor.script_count
+                name: Скриптов
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: '**Raspberry PI**'
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: custom:button-card
+                name: Raspberry
+                icon: mdi:power
+                styles:
+                  card:
+                    - font-size: 12px
+                tap_action:
+                  action: call-service
+                  service: script.poweroff_server
+              - type: custom:button-card
+                name: Raspberry
+                icon: mdi:restart
+                styles:
+                  card:
+                    - font-size: 12px
+                tap_action:
+                  action: call-service
+                  service: script.restart_server
+              - type: custom:button-card
+                name: Обновить SpeedTest
+                icon: mdi:speedometer
+                styles:
+                  card:
+                    - font-size: 11px
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.speedtest_manual
+          - type: glance
+            entities:
+              - entity: sensor.last_boot_custom
+                name: Онлайн
+                icon: mdi:av-timer
+              - entity: sensor.state_throtlling
+                name: Питание
+                icon: mdi:power-plug
+              - entity: sensor.disk_free
+                name: Свободно на диске
+            show_name: true
+            show_state: true
+            state_color: false
+            show_icon: true
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+            - type: custom:mini-graph-card
+              name: ОЗУ
+              icon: mdi:memory
+              entities:
+                - entity: sensor.memory_use_percent
+              hours_to_show: 72
+              color_thresholds:
+                - value: 30
+                  color: "#00bd5b"
+                - value: 45
+                  color: "#e6c302"
+                - value: 70
+                  color: "#e67802"
+                - value: 100
+                  color: "#e61d02"
+            - type: custom:mini-graph-card
+              name: CPU
+              icon: mdi:desktop-tower-monitor
+              entities:
+                - entity: sensor.processor_use
+              hours_to_show: 72
+              color_thresholds:
+                - value: 30
+                  color: "#00bd5b"
+                - value: 45
+                  color: "#e6c302"
+                - value: 70
+                  color: "#e67802"
+                - value: 100
+                  color: "#e61d02"
+          - type: custom:mini-graph-card
+            name: Температра CPU
+            icon: mdi:thermometer-low
+            entities:
+              - entity: sensor.cpu_temp
+            hours_to_show: 72
+            color_thresholds:
+              - value: 43
+                color: "#00bd5b"
+              - value: 50
+                color: "#e6c302"
+              - value: 60
+                color: "#e67802"
+              - value: 100
+                color: "#e61d02"
+          - type: entities
+            entities:
+              - entity: sensor.time_date
+                name: Время, дата сервера
+              - type: divider
+              - entity: sensor.last_backup_system_rpi
+                name: Последняя копия
+                icon: mdi:buffer
+              - type: divider
+              - entity: sensor.ipv4_address_eth0
+                name: Адрес в сети
+                icon: mdi:wan
+              - entity: sensor.speedtest_download
+                name: Скорость загрузки
+                icon: mdi:download
+              - entity: sensor.speedtest_upload
+                name: Скорость отдачи
+                icon: mdi:upload
+              - entity: sensor.speedtest_ping
+                name: Пинг
+            state_color: false
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: '**ZigBee**'
+          - type: markdown
+            content: '**Шлюз Gateway 3**'
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: custom:button-card
+                name: Перезагрузить
+                icon: mdi:restart
+                styles:
+                  card:
+                    - font-size: 12px
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.reboot_gateway3
+              - type: custom:button-card
+                entity: remote.0x588e81fffedaba82_pair
+                name: Режим сопряжения
+                styles:
+                  card:
+                    - font-size: 12px
+                tap_action:
+                  action: call-service
+                  service: remote.toggle
+                  service_data:
+                    entity_id: remote.0x588e81fffedaba82_pair
+              - type: custom:button-card
+                name: Запуск ftp
+                icon: mdi:lan
+                styles:
+                  card:
+                    - font-size: 12px
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data:
+                    entity_id: script.ftp_gateway3
+          - type: glance
+            entities:
+              - entity: sensor.last_boot_gw3
+                name: Онлайн
+                icon: mdi:clock
+              - entity: sensor.gw3_free_mem
+                name: Свободно памяти
+              - entity: sensor.gw3_rssi
+                name: RSSI
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: sensor.gw3_online
+                name: Онлайн в HA
+              - entity: sensor.gw3_radio_channel
+                name: Канал ZigBee
+              - entity: sensor.gw3_radio_tx_power
+                name: Мощность передатчика
+          - type: markdown
+            content: '**Датчики, сенсоры**'
+          - type: entities
+            entities:
+              - entity: binary_sensor.sn_entrance_door_contact
+                name: Входная дверь
+              - entity: binary_sensor.sn_occupancy_hallway_motion
+                name: Движение прихожая
+          - type: markdown
+            content: '**Уровень батареи**'
+          - type: entities
+            show_header_toggle: false
+            entities: 
+              - type: custom:fold-entity-row
+                head: 
+                  type: section
+                  label: Свернуть/Развернуть
+                open: false
+                entities:
+                - type: custom:flex-table-card
+                  clickable: true
+                  sort_by: state+
+                  columns:
+                    - data: friendly_name
+                      name: Устройство
+                    - data: state
+                      name: Батарея
+                      modify: 'x.replace("unknown","").replace("unavailable","")'
+                  entities:
+                    include: sensor.*_battery
+                  css:
+                    table+: 'padding-top: 15px;'
+                    'tbody tr:nth-child(even)': 'background-color: #a2542f6;'
+                    td.left: 'padding: 10px 10px 10px 10px'
+                    th.left: 'padding: 0px 0px 10px 3px' 
+
+#=======================================================================
+#                           Освещение
+#=======================================================================
+  - title: Освещение
+    icon: mdi:lightbulb-group
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: '**Быстрые действия**'  
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: custom:button-card
+                name: Обновить освещение
+                icon: mdi:restart
+                styles:
+                  card:
+                    - font-size: 12px
+                tap_action:
+                  action: call-service
+                  service: script.update_light_devices_on
+              - type: custom:button-card
+                name: Выкл все освещение
+                icon: mdi:lightbulb-multiple-off
+                styles:
+                  card:
+                    - font-size: 12px
+                tap_action:
+                  action: call-service
+                  service: light.turn_off
+                  service_data:
+                    entity_id: light.all_light_group
+              - type: custom:button-card
+                name: Заглушка
+                icon: mdi:sync-alert
+                styles:
+                  card:
+                    - font-size: 12px
+                tap_action:
+                  action: call-service
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - type: custom:fold-entity-row
+                head:
+                  type: section
+                  label: Расширенные действия
+                open: false
+                entities:
+                  - entity: input_select.scene_select
+                    name: Выбор сцены освещения
+                  - entity: input_number.light_brightness_mode
+                    name: Текущая яркость
+                    icon: mdi:brightness-6
+                  - entity: input_number.light_kelvin_mode
+                    name: Текущая темпер.
+                    icon: mdi:palette                
+
+          - type: markdown
+            content: '**Группы освещения**'
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: light
+                entity: light.lamp_bedroom
+                name: Люстра зал
+                icon: mdi:ceiling-light
+              - type: light
+                entity: light.sw_kitchen_lamp
+                name: Люстра кухня
+                icon: mdi:ceiling-light
+              - type: light
+                entity: light.hallway_and_kitchen_spotlight_group
+                name: Прихожая и кухня
+                icon: mdi:vanity-light
+              - type: light
+                entity: light.bathroom_spotlight_group
+                name: Ванная
+                icon: mdi:vanity-light
+              - type: light
+                entity: light.led_bedroom
+                name: Подсветка зал
+                icon: mdi:led-strip-variant
+              - type: light
+                entity: light.led_kitchen
+                name: Подсветка кухня
+                icon: mdi:led-strip-variant
+              - type: light
+                entity: light.sw_loggia
+                name: Лоджия
+                icon: mdi:ceiling-light
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: '**Выключатели**'
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - type: custom:fold-entity-row
+                head:
+                  type: section
+                  label: Открыть/Закрыть
+                open: false
+                entities:
+                  - entity: switch.sw_single_loggia_switch
+                    name: Лоджия
+                    icon: mdi:light-switch
+                  - entity: switch.sw_single_bedroom_switch
+                    name: Спальня люстра
+                    icon: mdi:light-switch
+                  - entity: switch.sw_double_kitchen_switch_right
+                    name: Кухня светильники
+                    icon: mdi:light-switch
+                  - entity: switch.sw_double_kitchen_switch_left
+                    name: Кухня люстра
+                    icon: mdi:light-switch
+                  - entity: switch.sw_double_hallway_switch_left
+                    name: Прихожая светильники
+                    icon: mdi:light-switch
+                  - entity: switch.sw_double_hallway_switch_right
+                    name: Ванная светильники
+                    icon: mdi:light-switch
+          - type: markdown
+            content: '**Упраление светильниками**'
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - type: custom:fold-entity-row
+                head:
+                  type: section
+                  label: Прихожая
+                open: false
+                entities:
+                  - type: custom:slider-entity-row
+                    entity: light.hallway_spotlight_1
+                    name: №1
+                    toggle: true
+                  - type: custom:slider-entity-row
+                    entity: light.hallway_spotlight_2
+                    name: №2
+                    toggle: true
+                  - type: custom:slider-entity-row
+                    entity: light.hallway_spotlight_3
+                    name: №3
+                    toggle: true
+              - type: custom:fold-entity-row
+                head:
+                  type: section
+                  label: Кухня
+                open: false
+                entities:
+                  - type: custom:slider-entity-row
+                    entity: light.kitchen_spotlight_1
+                    name: №1
+                    toggle: true
+                  - type: custom:slider-entity-row
+                    entity: light.kitchen_spotlight_2
+                    name: №2
+                    toggle: true
+              - type: custom:fold-entity-row
+                head:
+                  type: section
+                  label: Ванна
+                open: false
+                entities:
+                  - type: custom:slider-entity-row
+                    entity: light.bathroom_spotlight_1
+                    name: №1
+                    toggle: true
+                  - type: custom:slider-entity-row
+                    entity: light.bathroom_spotlight_2
+                    name: №2
+                    toggle: true
+                  - type: custom:slider-entity-row
+                    entity: light.bathroom_spotlight_3
+                    name: №3
+                    toggle: tru
+          - type: markdown
+            content: '**Настройка режима освещения**'  
+          - type: markdown
+            content: |
+              - Профиль: {{ states('input_text.time_light_mode') }}
+              - Яркость: {{ states('input_number.light_brightness_mode') }}
+              - Температура: {{ states('input_number.light_kelvin_mode') }} 
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_select.light_mode
+                name: Выбор профиля
+              - entity: input_boolean.update_light_mode
+                name: Обновить профиль принудительно
+              - entity: input_boolean.auto_update_light_devices_on
+                name: Авто обновление вкл источников света 
+              - type: custom:fold-entity-row
+                head:
+                  type: section
+                  label: Настройка профиля
+                open: false
+                entities:
+                  - entity: input_number.light_day_brightness
+                    name: Яркость день
+                    icon: mdi:brightness-6
+                  - entity: input_number.light_night_brightness
+                    name: Яркость ночь
+                    icon: mdi:brightness-6
+                  - entity: input_number.light_sleep_brightness
+                    name: Яркость сон
+                    icon: mdi:brightness-6
+                  - type: divider
+                  - entity: input_number.light_day_kelvin
+                    name: Цвет день
+                    icon: mdi:palette
+                  - entity: input_number.light_night_kelvin
+                    name: Цвет ночь
+                    icon: mdi:palette
+                  - entity: input_number.light_sleep_kelvin
+                    name: Цвет сон
+                    icon: mdi:palette
+                  - type: divider
+                  - entity: input_datetime.light_mode_day
+                    name: ДЕНЬ начинается с 
+                  - entity: input_datetime.light_mode_night
+                    name: НОЧЬ начинается с 
+                  - entity: input_datetime.light_mode_sleep
+                    name: СОН начинается с  
+#=======================================================================
+#                            Медиа
+#=======================================================================
+  - title: Медиа
+    icon: mdi:play-network
+    cards:
+      - type: entities
+        entities:
+          - input_select.remote_controller_switch  
+      - type: entities
+        entities:
+          - type: custom:mini-media-player
+            entity: media_player.lg_smart_tv
+            name: Телевизор LG
+            group: true
+            hide:
+              power: true
+              icon: true
+              source: true
+          - type: custom:mini-media-player
+            entity: media_player.raspberrypi
+            name: Медиаплеер Kodi
+            group: true
+            hide:
+              power: true
+              icon: true
+              source: true
+      - type: horizontal-stack
+        cards:
+        #Кнопка ГРОМКОСТЬ_10
+        - type: custom:button-card
+          icon: mdi:volume-high
+          name: 10
+          tap_action:
+            action: call-service
+            service: script.lg_tv_set_volume_10
+            service_data:
+              entity_id: media_player.lg_smart_tv
+        #Кнопка ГРОМКОСТЬ_15
+        - type: custom:button-card
+          icon: mdi:volume-high
+          name: 15
+          tap_action:
+            action: call-service
+            service: script.lg_tv_set_volume_15
+            service_data:
+              entity_id: media_player.lg_smart_tv     
+        #Кнопка ГРОМКОСТЬ_25
+        - type: custom:button-card
+          icon: mdi:volume-high
+          name: 25
+          tap_action:
+            action: call-service
+            service: script.lg_tv_set_volume_25
+            service_data:
+              entity_id: media_player.lg_smart_tv
+        #Кнопка ГРОМКОСТЬ_35
+        - type: custom:button-card
+          icon: mdi:volume-high
+          name: 35
+          tap_action:
+            action: call-service
+            service: script.lg_tv_set_volume_35
+            service_data:
+              entity_id: media_player.lg_smart_tv
+        #Кнопка ГРОМКОСТЬ_45
+        - type: custom:button-card
+          icon: mdi:volume-high
+          name: 45
+          tap_action:
+            action: call-service
+            service: script.lg_tv_set_volume_45
+            service_data:
+              entity_id: media_player.lg_smart_tv
+      - type: custom:state-switch
+        entity: input_select.remote_controller_switch
+        states:
+          Телевизор:
+            type: vertical-stack
+            cards:    
+            - type: markdown
+              content: '**Телевизор**'   
+            - type: grid
+              columns: 4
+              square: false
+              cards: 
+              # Питание
+              - type: custom:button-card
+                icon: mdi:power-standby
+                name: ВКЛ/ВЫКЛ
+                styles:
+                  card:
+                    - font-size: 13px
+                tap_action:
+                  action: call-service
+                  service: remote.send_command
+                  service_data:
+                    entity_id: remote.rm4c_mini_remote
+                    device: tv_lg
+                    command: power
+              # Быстрое ВКЛ ТВ 
+              - type: custom:button-card
+                name: ВКЛ/ВЫКЛ ТВ
+                icon: mdi:power-standby
+                styles:
+                  card:
+                    - font-size: 13px
+                tap_action:
+                  action: call-service
+                  service: script.fast_toggle_tv
+              # Источник ПК
+              - type: custom:button-card
+                name: ПК
+                icon: mdi:video-input-hdmi
+                styles:
+                  card:
+                    - font-size: 13px
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_source_pc
+                  service_data:
+                    entity_id: media_player.lg_smart_tv
+              # Источник PI
+              - type: custom:button-card
+                name: PI
+                icon: mdi:video-input-hdmi
+                styles:
+                  card:
+                    - font-size: 13px
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_source_pi
+                  service_data:
+                    entity_id: media_player.lg_smart_tv 
+              #Кнопка КАНАЛ-
+              - type: custom:button-card
+                icon: mdi:chevron-down-circle-outline
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_button_ch_down
+                  service_data:
+                    entity_id: media_player.lg_smart_tv     
+              # Источник PLEX
+              - type: custom:button-card
+                name: PLEX
+                icon: mdi:plex
+                styles:
+                  card:
+                    - font-size: 13px
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_source_plex
+                  service_data:
+                    entity_id: media_player.lg_smart_tv
+              # Источник SS IPTV
+              - type: custom:button-card
+                name: SS IPTV
+                icon: mdi:television-box
+                styles:
+                  card:
+                    - font-size: 13px
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_source_ssiptv
+                  service_data:
+                    entity_id: media_player.lg_smart_tv
+              #Кнопка КАНАЛ+
+              - type: custom:button-card
+                icon: mdi:chevron-up-circle-outline
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_button_ch_up
+                  service_data:
+                    entity_id: media_player.lg_smart_tv
+            - type: markdown
+              content: '****'     
+            - type: grid
+              columns: 3
+              square: false
+              cards: 
+              #Кнопка НАЗАД
+              - type: custom:button-card
+                icon: mdi:rotate-left
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_button_back
+                  service_data:
+                    entity_id: media_player.lg_smart_tv
+              #Кнопка ВВЕРХ
+              - type: custom:button-card
+                icon: mdi:transfer-up
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_button_up
+                  service_data:
+                    entity_id: media_player.lg_smart_tv
+              #Кнопка Домой
+              - type: custom:button-card
+                icon: mdi:home-variant-outline
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_button_home
+                  service_data:
+                    entity_id: media_player.lg_smart_tv       
+              #Кнопка ВЛЕВО
+              - type: custom:button-card
+                icon: mdi:transfer-left
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_button_left
+                  service_data:
+                    entity_id: media_player.lg_smart_tv   
+              #Кнопка ВВОД
+              - type: custom:button-card
+                icon: mdi:image-filter-center-focus
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_button_enter
+                  service_data:
+                    entity_id: media_player.lg_smart_tv  
+              #Кнопка ВПРАВО
+              - type: custom:button-card
+                icon: mdi:transfer-right
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_button_right
+                  service_data:
+                    entity_id: media_player.lg_smart_tv
+              #Кнопка ГРОМКОСТЬ-
+              - type: custom:button-card
+                icon: mdi:volume-minus
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_button_volumedown
+                  service_data:
+                    entity_id: media_player.lg_smart_tv
+              #Кнопка ВНИЗ
+              - type: custom:button-card
+                icon: mdi:transfer-down
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_button_down
+                  service_data:
+                    entity_id: media_player.lg_smart_tv  
+              #Кнопка ГРОМКОСТЬ+
+              - type: custom:button-card
+                icon: mdi:volume-plus
+                repeat: 500
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_button_volumeup
+                  service_data:
+                    entity_id: media_player.lg_smart_tv   
+            - type: grid
+              columns: 4
+              square: false
+              cards: 
+              #Кнопка КРАСНАЯ
+              - type: custom:button-card
+                icon: mdi:card-outline
+                name: RED
+                styles:
+                  card:
+                    - font-size: 13px
+                color_type: label-card
+                color: rgb(158, 6, 6)
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_button_red
+                  service_data:
+                    entity_id: media_player.lg_smart_tv
+              #Кнопка ЗЕЛЕНАЯ
+              - type: custom:button-card
+                icon: mdi:card-outline
+                name: GREEN
+                styles:
+                  card:
+                    - font-size: 13px
+                color_type: label-card
+                color: rgb(6, 158, 65)
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_button_green
+                  service_data:
+                    entity_id: media_player.lg_smart_tv
+              #Кнопка ЖЕЛТАЯ
+              - type: custom:button-card
+                icon: mdi:card-outline
+                name: YELLOW
+                styles:
+                  card:
+                    - font-size: 13px
+                color_type: label-card
+                color: rgb(222, 211, 13)
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_button_yellow
+                  service_data:
+                    entity_id: media_player.lg_smart_tv
+              #Кнопка ГОЛУБАЯ
+              - type: custom:button-card
+                icon: mdi:card-outline
+                name: BLUE
+                styles:
+                  card:
+                    - font-size: 13px
+                color_type: label-card
+                color: rgb(6, 100, 207)
+                tap_action:
+                  action: call-service
+                  service: script.lg_tv_button_blue
+                  service_data:
+                    entity_id: media_player.lg_smart_tv      
+          Kodi:
+            type: vertical-stack
+            cards:
+            - type: markdown
+              content: '**Медиаплеер Kodi**'      
+            - type: grid
+              columns: 3
+              square: false
+              cards: 
+              #Кнопка НАЗАД
+              - type: custom:button-card
+                icon: mdi:rotate-left
+                tap_action:
+                  action: call-service
+                  service: script.kodi_back
+              #Кнопка ВВЕРХ
+              - type: custom:button-card
+                icon: mdi:transfer-up
+                tap_action:
+                  action: call-service
+                  service: script.kodi_up
+              #Кнопка Домой
+              - type: custom:button-card
+                icon: mdi:home-variant-outline
+                tap_action:
+                  action: call-service
+                  service: script.kodi_home      
+              #Кнопка ВЛЕВО
+              - type: custom:button-card
+                icon: mdi:transfer-left
+                tap_action:
+                  action: call-service
+                  service: script.kodi_left
+              #Кнопка ВВОД
+              - type: custom:button-card
+                icon: mdi:image-filter-center-focus
+                tap_action:
+                  action: call-service
+                  service: script.kodi_select
+              #Кнопка ВПРАВО
+              - type: custom:button-card
+                icon: mdi:transfer-right
+                tap_action:
+                  action: call-service
+                  service: script.kodi_right
+              #Кнопка Играть/Пауза
+              - type: custom:button-card
+                icon: mdi:play-circle-outline
+                tap_action:
+                  action: call-service
+                  service: script.kodi_play_pause     
+              #Кнопка ВНИЗ
+              - type: custom:button-card
+                icon: mdi:transfer-down
+                tap_action:
+                  action: call-service
+                  service: script.kodi_down     
+              #Кнопка СТОП
+              - type: custom:button-card
+                icon: mdi:stop-circle-outline
+                tap_action:
+                  action: call-service
+                  service: script.kodi_stop
+              #Кнопка OSD
+              - type: custom:button-card
+                icon: mdi:dots-horizontal-circle-outline
+                tap_action:
+                  action: call-service
+                  service: script.kodi_show_osd   
+              #Кнопка ПЛЕЙЛИСТ ТВ
+              - type: custom:button-card
+                icon: mdi:playlist-play
+                tap_action:
+                  action: call-service
+                  service: script.kodi_ch_list     
+              #Кнопка ЗАГЛУШКА
+              - type: custom:button-card
+                icon: mdi:sync-alert
+                tap_action:
+                  action: call-service
+            - type: entities
+              show_header_toggle: false
+              entities:
+                - entity: script.kodi_quit
+                  name: Закрыть Kodi
+                - entity: script.kodi_run
+                  name: Открыть Kodi
+
+#=======================================================================
+#                            Климат
+#=======================================================================
+  - title: Климат
+    icon: mdi:fan
+    cards:
+      - type: vertical-stack
+        cards:
+        - type: markdown
+          content: '**Спальня**'
+        - type: grid
+          columns: 2
+          square: false
+          cards:  
+          - type: custom:mini-graph-card
+            line_color: blue
+            entities:
+              - entity: sensor.sn_tempr_hum_bedroom_humidity
+            name: Влажность
+            hours_to_show: 72
+          - type: custom:mini-graph-card
+            line_color: orange
+            entities:
+              - entity: sensor.sn_tempr_hum_bedroom_temperature
+            name: Температура
+            hours_to_show: 72
+        - type: markdown
+          content: '**Кондиционер**'
+        - type: custom:simple-thermostat
+          entity: climate.air_conditioner 
+          show_header: false
+          step_layout: row          
+          step_size: 1
+          label:
+            temperature: Температура
+          control:
+            _names: false
+            _headings: false   
+        - type: grid
+          columns: 4
+          square: false
+          cards:             
+          - type: custom:button-card
+            icon: mdi:play-circle-outline
+            name: Старт таймер
+            styles:
+              card:
+                - font-size: 12px
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.start_timer_break_air_conditioning
+          - type: custom:button-card
+            icon: mdi:stop-circle-outline
+            name: Стоп таймер
+            styles:
+              card:
+                - font-size: 12px
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.stop_timer_break_air_conditioning 
+          - type: custom:button-card
+            name: Заглушка
+            icon: mdi:sync-alert
+            styles:
+              card:
+                - font-size: 12px
+            tap_action:
+              action: call-service
+          - type: custom:button-card
+            name: Заглушка
+            icon: mdi:sync-alert
+            styles:
+              card:
+                - font-size: 12px
+            tap_action:
+              action: call-service
+        - type: entities
+          show_header_toggle: false
+          entities:
+            - entity: timer.break_air_conditioning
+              name: Отключение через
+            - entity: input_datetime.air_conditioner_time_work
+              name: Установка таймера       
+      - type: vertical-stack
+        cards:
+        - type: markdown
+          content: '**Ванна**' 
+        - type: grid
+          columns: 2
+          square: false
+          cards: 
+          - type: custom:mini-graph-card
+            line_color: blue
+            entities:
+              - entity: sensor.sn_tempr_hum_bathroom_humidity
+                name: относительная
+            name: Влажность
+            hours_to_show: 72
+          - type: custom:mini-graph-card
+            line_color: orange
+            entities:
+              - entity: sensor.sn_tempr_hum_bathroom_temperature
+                y_axis: secondary
+            name: Температура
+            show:
+              labels_secondary: true
+            hours_to_show: 72
+        - type: entities
+          show_header_toggle: false
+          entities:
+            - entity: switch.sw_double_hood_fan_switch_left
+              name: Вытяжка
+              state_color: true
+            - type: divider
+            - entity: input_boolean.air_fan_auto
+              name: Авто режим
+              state_color: true
+            - entity: timer.ventilation_off_duration
+              name: Время до отключения
+            - entity: input_number.humidity_air_fan_start_level
+              name: Порог автовключения
+            - entity: input_datetime.air_fan_time_work
+              name: Время работы не более
+
+#=======================================================================
+#                          Управление водой
+#=======================================================================
+  - title: Управление водой
+    icon: mdi:water
+    cards:     
+      - type: vertical-stack
+        cards:
+        - type: markdown
+          content: |
+            **Управление водой**
+            Состояние:
+            - {{ states('input_text.status_cold_water_tap')}}
+            - {{ states('input_text.status_hot_water_tap')}}                    
+        - type: horizontal-stack
+          cards:
+          - type: custom:button-card
+            entity: group.water_close_tap_hot_cold
+            name: Закрыть воду
+            color: rgb(28, 128, 199)
+            styles:
+              card:
+                - font-size: 12px
+            state:
+              - value: "off"
+                icon: mdi:water-pump-off
+                color: rgb(255, 255, 255)
+              - value: "on"
+                icon: mdi:water-pump-off
+                color: rgb(222, 218, 11)
+          - type: custom:button-card
+            entity: group.water_open_tap_hot_cold
+            name: Открыть воду
+            color: rgb(191, 191, 191)
+            styles:
+              card:
+                - font-size: 12px
+            state:
+              - value: "off"
+                icon: mdi:water-pump
+                color: rgb(255, 255, 255)
+              - value: "on"
+                icon: mdi:water-pump
+                color: rgb(222, 218, 11)
+        - type: markdown
+          content: '**Состояния датчиков протечки**'
+        - type: entities
+          show_header_toggle: false
+          entities: 
+            - entity: binary_sensor.sn_water_sink_kitchen_water_leak
+              name: Кухня
+              state_color: true
+            - entity: binary_sensor.sn_water_sink_bathroom_water_leak
+              name: Ванна раковина
+              state_color: true
+            - entity: binary_sensor.sn_water_sink_bathroom_2_water_leak
+              name: Ванна туалет
+              state_color: true
+      - type: vertical-stack
+        cards:
+        - type: markdown
+          content: '**Кран холодной воды**'    
+        - type: entities
+          show_header_toggle: false
+          entities: 
+            - entity: switch.rl_cold_water_switch_l1
+              name: Закрыть холодную
+              state_color: true
+            - entity: switch.rl_cold_water_switch_l2
+              name: Открыть холодную
+              state_color: true
+            - entity: sensor.state_cold_water_relay
+              name: Сенсор работы привода -  
+            - entity: sensor.rl_cold_water_power
+              name: Текущая мощность - 
+        - type: markdown
+          content: '**Кран горячей воды**'   
+        - type: entities
+          show_header_toggle: false
+          entities:
+            - entity: switch.rl_hot_water_switch_l1
+              name: Закрыть горячую
+              state_color: true
+            - entity: switch.rl_hot_water_switch_l2
+              name: Открыть горячую
+              state_color: true
+            - entity: sensor.state_hot_water_relay
+              name: Сенсор работы привода - 
+            - entity: sensor.rl_hot_water_power
+              name: Текущая мощность - 
+
+#=======================================================================
+#                         Прочее
+#=======================================================================
+  - title: Прочее
+    icon: mdi:cog-transfer-outline
+    cards:
+      - type: vertical-stack
+        cards:
+        - type: markdown
+          content: '**Будильник**'    
+        - type: entities
+          show_header_toggle: false
+          entities:
+            - entity: input_boolean.alarm_clock_toggle
+              name: Будильник ВКЛ/ВЫКЛ
+            - entity: input_datetime.alarm_clock_time
+              name: Время будильника
+              icon: mdi:clock
+            - entity: sensor.alarm_clock_sel_days
+              name: Выбраны дни
+              icon: mdi:calendar
+            - entity: sensor.alarm_clock_sel_function
+              name: Выбраны функции
+              icon: mdi:check-circle-outline
+        - type: horizontal-stack
+          cards:
+          - type: custom:button-card
+            entity: input_boolean.alarm_clock_light
+            name: Освещение
+            styles:
+              card:
+                - font-size: 11px
+          - type: custom:button-card
+            entity: input_boolean.alarm_clock_tv
+            name: Телевизор
+            styles:
+              card:
+                - font-size: 11px
+          - type: custom:button-card
+            entity: input_boolean.alarm_clock_run_conditioner
+            name: Кондиционер
+            styles:
+              card:
+                - font-size: 11px
+        - type: entities
+          show_header_toggle: false
+          entities:
+            - type: custom:fold-entity-row
+              head:
+                type: section
+                label: Установить дни
+              open: false
+              entities:              
+                - entity: input_boolean.alarm_clock_set_monday
+                  name: Понедельник
+                - entity: input_boolean.alarm_clock_set_tuesday
+                  name: Вторник
+                - entity: input_boolean.alarm_clock_set_wednesday
+                  name: Среда
+                - entity: input_boolean.alarm_clock_set_thursday
+                  name: Четверг
+                - entity: input_boolean.alarm_clock_set_friday
+                  name: Пятница
+                - entity: input_boolean.alarm_clock_set_saturday
+                  name: Суббота
+                - entity: input_boolean.alarm_clock_set_sunday
+                  name: Воскресенье
+            - type: custom:fold-entity-row
+              head:
+                type: section
+                label: Расширенная настройка
+              open: false
+              entities:
+                - entity: input_number.alarm_clock_light_brightness
+                  name: Освещение яркость
+                - type: divider
+                - entity: input_number.alarm_clock_tv_volume
+                  name:  ТВ Громкость
+                - entity: input_number.alarm_clock_tv_ch
+                  name:  ТВ Канал
+                - type: divider
+                - entity: sensor.alarm_clock_run_conditioner
+                  name: КОНД включить в
+                  icon: mdi:av-timer
+                - entity: input_datetime.alarm_clock_run_conditioner
+                  name: КОНД включить за
+                - entity: input_number.alarm_clock_conditioner_tempr
+                  name: КОНД температура
+                - entity: input_select.alarm_clock_conditioner_mode
+                  name: КОНД режим
+
+#=======================================================================
+#                         ZigBee info
+#=======================================================================
+  - title: ZigBee info
+    icon: mdi:zigbee
+    panel: true
+    cards:     
+      - type: custom:flex-table-card
+        clickable: true
+        sort_by: state-
+        columns:
+          - data: friendly_name
+            name: Friendly Name
+          - data: ieee
+            name: IEEE
+            modify: x+''
+          - data: nwk
+            name: NWK
+            modify: x+''
+          - data: msg_received
+            name: Recv
+            modify: x+''
+          - data: msg_missed
+            name: Miss
+            modify: x+''
+          - data: unresponsive
+            name: Unresp
+            modify: x+''
+          - data: link_quality
+            name: LQI
+            modify: x+''
+          - data: rssi
+            name: RSSI
+            modify: x+''
+          - data: type
+            name: Type
+            modify: x+''
+          - data: parent
+            name: Parent
+            modify: x+''
+          - data: last_msg
+            name: Last Msg
+            modify: x+''
+          - data: state
+            name: Last seen
+            modify: 'var dt=new Date(0,0,0,0,0,0,(Date.now()-Date.parse(x))); 
+                    isFinite (dt) ? dt.toTimeString().split(" ") [0] : ""'
+        entities:
+          include: sensor.*_zigbee
+        css:
+          table+: 'padding-top: 15px;'
+          'tbody tr:nth-child(even)': 'background-color: #a2542f6;'
+          td.left: 'padding: 10px 10px 10px 10px'
+          th.left: 'padding: 0px 0px 10px 3px'        

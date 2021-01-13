@@ -1,0 +1,156 @@
+system_report:
+
+  #=======================================================================
+  #                       Автоматизации
+  #=======================================================================
+  automation:
+
+    # Запуск еженедельного отчета              
+    - alias: sys_report
+      initial_state: true
+      trigger:
+        - platform: time
+          at: "11:00:00"
+      condition:
+        condition: time
+        weekday:
+          - sat
+      action:  
+      - service: script.turn_on
+        entity_id: script.check_devices_status_unavailable
+
+    # Отслеживание устройств в статусе unavailable                
+    - alias: check_devices_status_unavailable
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: 
+            - binary_sensor.sn_water_sink_bathroom_water_leak
+            - binary_sensor.sn_water_sink_bathroom_2_water_leak
+            - binary_sensor.sn_water_sink_kitchen_water_leak
+            - binary_sensor.sn_entrance_door_contact
+            - binary_sensor.sn_stat_conditioner_contact
+            - binary_sensor.sn_occupancy_hallway_motion
+            - switch.rl_cold_water_switch_l1
+            - switch.rl_cold_water_switch_l2
+            - switch.rl_hot_water_switch_l1
+            - switch.rl_hot_water_switch_l2
+          to: 'unavailable'
+      mode: single
+      action:
+        - service: script.turn_on
+          entity_id: script.check_devices_status_unavailable
+
+    # Telegram: Help по командам
+    - alias: reference_bot_command
+      initial_state: true
+      trigger:
+        platform: event
+        event_type: telegram_command
+        event_data:
+          command: '/help'
+      action:
+        - service: notify.telegram
+          data:
+            message: |
+              Привет! {{ "\U0000270B" }} Со мной твоя жизнь станет проще {{ "\U0001F334" }} .
+              Ниже я расскажу что умею {{ "\U0001F3C1" }} :
+              
+              Справка по командам:
+              
+              {{ "\U00002611" }} /ping - тестовая команда
+              
+              *Это пока что все что знаю, но я учусь* {{ "\U0001F60A" }}.
+              
+              Ну ладно вот еще посмотри какая температура в ванне и состояние двери:
+              
+              Температура в санузле: *{{ state_attr('sensor.sn_tempr_hum_bathroom_temperature', 'temperature') }}°*
+              Входная дверь: *{% if is_state('binary_sensor.sn_entrance_door_contact', 'off') %}закрыта{% else %}открыта{% endif %}*  
+
+    # Telegram: Уведомление о критической температуре сервера
+    - alias: notification_server_overheating 
+      initial_state: true
+      trigger:
+        platform: numeric_state
+        entity_id: sensor.cpu_temp
+        above: 65
+      action:
+        - service: notify.telegram
+          data:
+            message: |
+              *Тип:* {{ "\U0001F198" }} Критическое сообщение  
+              *Время:* {{ states('sensor.time_date')}}
+              *Сообщение:*
+              Температура сервера: *{{ states('sensor.cpu_temp')}}*° {{ "\U000026A0" }}
+              
+      # Telegram:  уведомление о проблеме с питанием
+    - alias: notification_bad_power
+      initial_state: true
+      trigger:
+        platform: state
+        entity_id: sensor.state_throtlling
+        from: '0'
+      action:
+        - service: notify.telegram
+          data:
+            message: |
+              *Тип:* {{ "\U0001F198" }} Критическое сообщение  
+              *Время:* {{ states('sensor.time_date')}}
+              *Сообщение:*
+              Обнаружена проблема с питанием сервера.
+              Датчик тротллинга: *{{ states('sensor.state_throtlling')}}* {{ "\U000026A0" }}
+              При значении отличном от 0 есть проблемы.
+          
+      # Telegram: уведомление о проблеме с напряжением в доме
+    - alias: notification_level_voltage_home
+      initial_state: false
+      trigger:
+        - platform: numeric_state
+          entity_id: sensor.rl_hot_water_voltage
+          above: '235' 
+        - platform: numeric_state
+          entity_id: sensor.rl_hot_water_voltage
+          below: '215'  
+      action:
+        - service: notify.telegram
+          data:
+            message: |
+              *Тип:* {{ "\U0001F198" }} Критическое сообщение  
+              *Время:* {{ states('sensor.time_date')}}
+              *Сообщение:*
+              *Значение:* {{ states('sensor.rl_hot_water_voltage')}} Вольт
+              Обнаружена проблема с напряжением в квартире.
+              Возможно срабатывание реле напряжения
+
+#=======================================================================
+#                           Скрипты
+#=======================================================================
+  script:
+    check_devices_status_unavailable:
+      mode: single
+      sequence:
+        # Если есть устройства в статусе unavailable
+        - choose:
+          - conditions: "{{ states|selectattr('state','eq','unavailable')|map(attribute='entity_id')|unique|list|count >0 }}"
+            sequence: 
+              - service: notify.telegram
+                data:
+                  message: |
+                    {% set list_unavailable = states|selectattr('state','eq','unavailable')
+                                                    | map(attribute='entity_id')
+                                                    | unique | list %}
+                    *Тип:* {{ "\U0001F6A7" }} Системное уведомление   
+                    *Время:* {{ states('sensor.time_date')}}
+                    *Сообщение:*
+                    {{ "\U0000274C" }}Обнаружено {{ list_unavailable|count }} сущности в статусе unavailable: 
+                    *{{ list_unavailable|join(', ') }}*
+          # Если нет устройств в статусе unavailable
+          - conditions: "{{ states|selectattr('state','eq','unavailable')|map(attribute='entity_id')|unique|list|count <1 }}"
+            sequence: 
+              - service: notify.telegram
+                data:
+                  message: |
+                    *Тип:* {{ "\U0001F6A7" }} Системное уведомление   
+                    *Время:* {{ states('sensor.time_date')}}
+                    *Сообщение:*
+                    {{ "\U00002705" }}Нет сущностей в состоянии unavailable

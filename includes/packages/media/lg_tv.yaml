@@ -1,0 +1,213 @@
+media_lg_tv:
+  #=======================================================================
+  #                      Подключение LG TV WebOS
+  #=======================================================================
+  webostv:
+    host: 192.168.1.65
+    name: LG Smart TV
+    customize:
+      sources:
+        - 'SS IPTV'
+        - 'Plex'
+        - hdmi1
+        - hdmi2
+        - hdmi3
+        - livetv
+        - youtube  
+
+#=======================================================================
+#                           Скрипты
+#=======================================================================
+  script:
+    # Кнопка "ПИТАНИЕ ИК"
+    lg_tv_button_power_ir:
+      sequence:
+        - service: remote.send_command
+          data:
+            entity_id: remote.rm4c_mini_remote
+            device: tv_lg
+            command: power    
+    # Кнопка "ДОМОЙ"
+    lg_tv_button_home:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "HOME"   
+    # Кнопка "НАЗАД"
+    lg_tv_button_back:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "BACK"  
+    # Кнопка "ВВОД"
+    lg_tv_button_enter:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "ENTER"  
+    # Кнопка "ВЫХОД"
+    lg_tv_button_exit:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "EXIT"
+    # Кнопка "ВЛЕВО"
+    lg_tv_button_left:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "LEFT" 
+    # Кнопка "ВПРАВО"
+    lg_tv_button_right:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "RIGHT"
+    # Кнопка "ВВЕРХ"
+    lg_tv_button_up:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "UP"
+    # Кнопка "ВНИЗ"
+    lg_tv_button_down:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "DOWN"
+    # Кнопка "ВЫКЛЮЧИТЬ ЗВУК"
+    lg_tv_button_mute:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "MUTE" 
+    # Кнопка "ГРОМКОСТЬ +"
+    lg_tv_button_volumeup:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "VOLUMEUP"
+    # Кнопка "ГРОМКОСТЬ -"
+    lg_tv_button_volumedown:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "VOLUMEDOWN"
+    # Кнопка "КАНАЛ+"
+    lg_tv_button_ch_up:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "CHANNELUP"
+    # Кнопка "КАНАЛ -"
+    lg_tv_button_ch_down:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "CHANNELDOWN"  
+    # Кнопка "КРАСНАЯ"
+    lg_tv_button_red:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "RED"
+    # Кнопка "ЗЕЛЕНАЯ"
+    lg_tv_button_green:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "GREEN"
+    # Кнопка "ГОЛУБАЯ"
+    lg_tv_button_blue:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "BLUE" 
+    # Кнопка "ЖЕЛТАЯ"
+    lg_tv_button_yellow:
+      sequence:
+        - service: webostv.button
+          data:
+            entity_id:  media_player.lg_smart_tv
+            button: "YELLOW"
+          
+    # Источник ПК
+    lg_tv_source_pc:
+      sequence:
+        - service: media_player.select_source
+          entity_id: media_player.lg_smart_tv
+          data:
+            source: ПК
+    # Источник SS IPTV
+    lg_tv_source_ssiptv:
+      sequence:
+        - service: media_player.select_source
+          entity_id: media_player.lg_smart_tv
+          data:
+            source: SS IPTV
+    # Источник Plex
+    lg_tv_source_plex:
+      sequence:
+        - service: media_player.select_source
+          entity_id: media_player.lg_smart_tv
+          data:
+            source: 'Plex'
+    # Источник PI
+    lg_tv_source_pi:
+      sequence:
+        - service: media_player.select_source
+          entity_id: media_player.lg_smart_tv
+          data:
+            source: Цифровая приставка
+          
+    # Громкость 10
+    lg_tv_set_volume_10:
+      sequence:
+        - service: media_player.volume_set
+          data:
+            entity_id:  media_player.lg_smart_tv
+            volume_level: 0.1
+    # Громкость 15
+    lg_tv_set_volume_15:
+      sequence:
+        - service: media_player.volume_set
+          data:
+            entity_id:  media_player.lg_smart_tv
+            volume_level: 0.15
+    # Громкость 25
+    lg_tv_set_volume_25:
+      sequence:
+        - service: media_player.volume_set
+          data:
+            entity_id:  media_player.lg_smart_tv
+            volume_level: 0.25 
+    # Громкость 35
+    lg_tv_set_volume_35:
+      sequence:
+        - service: media_player.volume_set
+          data:
+            entity_id:  media_player.lg_smart_tv
+            volume_level: 0.35
+    # Громкость 45
+    lg_tv_set_volume_45:
+      sequence:
+        - service: media_player.volume_set
+          data:
+            entity_id:  media_player.lg_smart_tv
+            volume_level: 0.45

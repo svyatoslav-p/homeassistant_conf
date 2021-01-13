@@ -1,0 +1,16 @@
+# Папки
+/.storage/
+/.cloud
+/.vscode/
+/custom_components/
+/deps/
+/themes/
+/tts/
+/www/
+
+# Файлы
+/.HA_VERSION
+/ha_v2.db
+/home-assistant.log
+/secrets.yaml
+/webostv.conf

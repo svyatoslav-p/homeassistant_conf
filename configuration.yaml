@@ -1,0 +1,81 @@
+#=======================================================================
+#                     Системные конфигурации
+#=======================================================================
+homeassistant:
+  name: Home smart
+  latitude: !secret latitude_coord
+  longitude: !secret longitude_coord
+  elevation: 253
+  unit_system: metric
+  time_zone: Europe/Moscow
+  customize: !include includes/customize.yaml
+  packages: !include_dir_merge_named includes/packages
+
+# Конфигурация по умолчанию
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+    service_name: google_say
+
+# Поддержка кастомных тем
+frontend:
+  themes: !include_dir_merge_named themes 
+    
+# Включим поддержку скриптов python
+python_script:
+
+#=======================================================================
+#                   Подключение кастомных модулей
+#=======================================================================
+
+# SmartIR
+smartir:
+  check_updates: false 
+  
+#=======================================================================
+#                      Подключение Telegram
+#=======================================================================
+telegram_bot:
+  - platform: polling
+    api_key: !secret api_key_telegram
+    allowed_chat_ids:
+      - !secret chat_id_sv
+      - !secret chat_id_yu
+      - !secret chat_id_group
+
+notify:
+  - name: telegram
+    platform: telegram
+    chat_id: !secret chat_id_group
+  
+#=======================================================================
+#                   Подключение внешних файлов/папок
+#=======================================================================
+
+# Подключение папок
+automation: !include_dir_merge_list includes/automation
+script: !include_dir_merge_named includes/scripts
+sensor: !include_dir_merge_list includes/sensors
+
+# Подключение файлов
+lovelace: !include includes/lovelace.yaml
+light: !include includes/light.yaml
+
+## recorder: !include includes/recorder.yaml
+## input_select: !include includes/input_select.yaml
+## binary_sensor: !include includes/sensor_binary.yaml
+## shell_command: !include includes/shell_command.yaml
+## timer: !include includes/timer.yaml
+## input_boolean: !include includes/input_boolean.yaml
+## input_number: !include includes/input_number.yaml
+## input_text: !include includes/input_text.yaml
+## remote: !include includes/remote.yaml 
+## switch: !include includes/switch.yaml
+## climate: !include includes/climate.yaml
+## media_player: !include includes/media_player.yaml
+## group: !include includes/groups.yaml
+## scene: !include includes/scene.yaml
+## input_datetime: !include includes/input_datetime.yaml
+    

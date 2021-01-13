@@ -1,0 +1,60 @@
+button_action:
+  #=======================================================================
+  #                       Автоматизации
+  #=======================================================================
+  automation:
+    # Если все уходят из дома
+    - alias: all_out_home
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: sensor.bt_double_wireless_hallway_action
+          to: 'button_1_double' # left
+      action:
+        - service: script.turn_on
+          entity_id: script.all_turn_off_dev
+      
+    # Если пришел домой с работы
+    - alias: action_returned_home_from_work
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: sensor.bt_double_wireless_hallway_action
+          to: 'button_2_single'
+      action:
+        - service: script.turn_on
+          entity_id: script.action_returned_home_from_work
+
+  #=======================================================================
+  #                           Скрипты
+  #=======================================================================
+  script:
+    # Действие если все уходят из дома
+    all_turn_off_dev:
+      sequence:
+        # Выключим весь свет
+        - service: light.turn_off
+          entity_id: light.all_light_group
+        # Выключим телевизор
+        - service: script.turn_on
+          entity_id: script.fast_tv_off      
+        # Выключим кондиционер
+        - service: >
+            {% if is_state('climate.air_conditioner', 'off') %}
+              script.empty_script
+            {% else %}
+              script.conditioner_power_off
+            {% endif %}
+
+    # Действие если вернулся домой с работы
+    action_returned_home_from_work:
+      sequence:
+        # Включим свет в спальне
+        - service: light.turn_on
+          entity_id: light.lamp_bedroom 
+          data_template:
+            brightness_pct: 100
+            color_temp: 155
+          # Включим телевизор
+        - service: script.turn_on
+          entity_id: script.fast_tv_on

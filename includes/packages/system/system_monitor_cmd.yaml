@@ -1,0 +1,257 @@
+system_monitor_cmd:
+  #=======================================================================
+  #                           Скрипты
+  #=======================================================================
+  script:
+    # Перезагрузить сервер
+    restart_server:
+      sequence:
+        - service: shell_command.restart_server
+
+    # Выключить сервер
+    poweroff_server:
+      sequence:
+        - service: shell_command.poweroff_server
+
+    # Пустой скрипт-заглушка
+    empty_script:
+      sequence:
+
+    # Запуск speedtest
+    speedtest_manual:
+      sequence:
+        - service: speedtestdotnet.speedtest   
+
+  #=======================================================================
+  #                            Бинарные сенсоры
+  #=======================================================================
+  binary_sensor:
+    # Сенсор определения рабочих дней по региону
+    - platform: workday
+      country: RU
+      workdays: [mon, tue, wed, thu, fri]
+      excludes: [sat, sun, holiday]
+      add_holidays:
+        - '2020-01-01'
+        - '2020-01-02'
+        - '2020-01-03'
+        - '2020-01-06'
+        - '2020-01-07'
+        - '2020-01-08'
+        - '2020-02-24'
+        - '2020-03-09'
+        - '2020-05-01'
+        - '2020-05-02'
+        - '2020-05-03'
+        - '2020-05-04'
+        - '2020-05-05'
+        - '2020-05-06'
+        - '2020-05-07'
+        - '2020-05-08'
+        - '2020-05-09'
+        - '2020-05-10'
+        - '2020-05-11'
+        - '2020-06-12'
+        - '2020-11-04'
+        - '2021-01-01'
+        - '2021-01-04'
+        - '2021-01-05'
+        - '2021-01-06'
+        - '2021-01-07'
+        - '2021-01-08'
+        - '2021-02-23'
+        - '2021-03-08'
+        - '2021-05-03'
+        - '2021-05-10'
+        - '2021-06-14'
+        - '2021-11-04'
+  #=======================================================================
+  #                            Сенсоры
+  #=======================================================================
+  sensor:
+    # Системное время, дата
+    - platform: time_date
+      display_options:
+        - 'time'
+        - 'date'
+        - 'time_date'
+
+    # Системный монитор
+    - platform: systemmonitor
+      resources:
+      - type: processor_use
+      - type: disk_use_percent
+        arg: /
+      - type: memory_use_percent
+      - type: last_boot
+      - type: disk_free
+        arg: /
+      - type: network_in
+        arg: 'eth0'
+      - type: network_out
+        arg: 'eth0'
+      - type: ipv4_address
+        arg: 'eth0'
+
+    # Время он-лайн
+    - platform: uptime
+      name: online
+    - platform: template
+      sensors:
+        online_custom:
+          value_template: >
+            {% set uptime = ((as_timestamp(now()) | int - as_timestamp(states('sensor.online')) | int)/60) | int %}
+            {% set minutes = (( uptime % 60) / 1) | int %}
+            {% set hours = ((uptime % 1440) / 60) | int %}
+            {% set days = (uptime / 1440) | int %}
+              {% if uptime < 1 %}
+                Меньше минуты
+              {% else %}
+                {% if days > 0 %}
+                  {{ days }} д.
+                {% endif %}
+                {% if hours > 0 %}
+                  {% if days > 0 %}
+                    {{ ' ' }}
+                  {% endif %}
+                  {{ hours }} ч.
+                {% endif %}
+                {% if minutes > 0 %}
+                  {% if days > 0 or hours > 0 %}
+                    {{ ' ' }}
+                  {% endif %}
+                    {{ minutes }} мин.
+                {% endif %}
+              {% endif %}
+
+    # Время с последней перезагрузки
+    - platform: template
+      sensors:
+        last_boot_custom:
+          friendly_name: "Последняя перезагрузка"
+          value_template: >
+            {% set uptime = as_timestamp (now()) -as_timestamp(states('sensor.last_boot')) | int %}
+            {% set minutes = (( uptime % 3600) / 60) | int %}
+            {% set hours = ((uptime % 86400) / 3600) | int %}
+            {% set days = (uptime / 86400) | int %}
+              {% if uptime < 1 %}
+                Меньше минуты
+              {% else %}
+                {% if days > 0 %}
+                  {{ days }} д.
+                {% endif %}
+                {% if hours > 0 %}
+                  {% if days > 0 %}
+                    {{ ' ' }}
+                  {% endif %}
+                  {{ hours }} ч.
+                {% endif %}
+                {% if minutes > 0 %}
+                  {% if days > 0 or hours > 0 %}
+                    {{ ' ' }}
+                  {% endif %}
+                    {{ minutes }} мин.
+                {% endif %}
+              {% endif %}
+          icon_template: mdi:clock 
+
+    # Текущая версия HA
+    - platform: version
+      name: current_ha
+      scan_interval: 1800  
+
+    # Проверяет последную версию HA
+    - platform: template
+      sensors:
+        version:
+          friendly_name: 'Последняя версия - '
+          value_template: '{{ states.binary_sensor.updater.attributes["newest_version"] }}'
+
+    # Температура RPI CPU
+    - platform: command_line
+      name: cpu_temp
+      command: "cat /sys/class/thermal/thermal_zone0/temp"
+      unit_of_measurement: "°C"
+      value_template: '{{ (value | multiply(0.001)) | round(1) }}'
+        
+      # Температура RPI SSD
+      #- platform: command_line
+      #  name: ssd_temp
+      #  command: "ssh pi@192.168.1.69 sudo smartctl -A /dev/sda | grep Temperature_Celsius | awk '{print $10}'"
+      #  unit_of_measurement: "°C"
+        
+    # Значений тротллинга RPI "undervoltage status"
+    - platform: command_line
+      name: undervoltage status
+      command: "cat /sys/devices/platform/soc/soc:firmware/get_throttled"
+      scan_interval: 120  
+
+    # Перевод значений тротллинга в читаемый вид из сенсора "undervoltage status"
+    - platform: template
+      sensors:
+        state_throtlling:
+          value_template: >-
+            {% if is_state('sensor.undervoltage_status', '0') %}
+              Питание в норме
+            {% else %}
+              Проблемы с питанием
+            {% endif %}
+
+    # Последний бэкап полной системы. Читаем дату изменения файла бэкапа, но успешен ли он или нет не знаем
+    - platform: command_line
+      name: last_backup_system_rpi
+      command: "ssh pi@192.168.1.69 stat --printf '%y' /mnt/pi_shared/sys/backup/rpi/rpi_backup.img | awk '{print $1}'"
+      scan_interval: 180
+
+    # Статистика объектов в системе
+    - platform: template
+      sensors:
+        # Всего сущностей
+        total_entities:
+          icon_template: mdi:format-list-numbered
+          value_template: "{{states('sensor.time') and states|count}}"
+        # Всего сенсоров
+        sensor_count:
+          icon_template: mdi:gauge
+          value_template: "{{states('sensor.time') and states.sensor|count}}"
+        # Всего бинарных сенсоров
+        binary_sensor_count:
+          icon_template: mdi:nintendo-switch
+          value_template: "{{states('sensor.time') and states.binary_sensor|count}}"
+        # Общее кол-во автоматизаций
+        automation_count:
+          icon_template: mdi:home-assistant
+          value_template: "{{states('sensor.time') and states.automation|count}}"
+        # Общее кол-во активных автоматизаций
+        automation_count_on:
+          value_template: "{{states('sensor.time') and states.automation | selectattr ('state', 'equalto', 'on') | list | length}}"
+          icon_template: mdi:counter
+        # Общее кол-во скриптов
+        script_count:
+          icon_template: mdi:script-text-outline
+          value_template: "{{states('sensor.time') and states.script|count}}"
+
+    # Информация о BackUp
+    - platform: template
+      sensors:
+        # Последний удачный бэкап
+        last_google_backup_train:
+          value_template: "{{ (as_timestamp(state_attr('sensor.snapshot_backup', 'last_snapshot'))) | timestamp_custom('%d.%m.%Y %H:%M') }}"
+          icon_template: mdi:calendar-check-outline
+        # Копий на Googe Drive
+        snapshots_in_google_drive_train:
+          value_template: "{{ state_attr('sensor.snapshot_backup', 'snapshots_in_google_drive') }}"
+          icon_template: mdi:folder-google-driv
+        # Копий локальных
+        snapshots_in_hassio_train:
+          value_template: "{{ state_attr('sensor.snapshot_backup', 'snapshots_in_hassio') }}"
+          icon_template: mdi:home-assistant 
+          
+  #=======================================================================
+  #                           Shell Command
+  #=======================================================================
+  shell_command:
+    # Перезагрузка сервера
+    restart_server: ssh pi@192.168.1.69 'sudo reboot'
+    # Выключение сервера
+    poweroff_server: ssh pi@192.168.1.69 'sudo poweroff'

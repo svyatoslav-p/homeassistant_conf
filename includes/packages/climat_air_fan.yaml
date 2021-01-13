@@ -1,0 +1,91 @@
+climat_air_fan:
+
+#===========================================================================
+#                       Автоматизации
+#===========================================================================
+  automation:
+    # Запуск таймера работы вытяжки
+    - alias: air_fan_start_timer
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: switch.sw_double_hood_fan_switch_left
+          from: 'off'
+          to: 'on'
+      action:
+        - service: timer.start       
+          entity_id: timer.ventilation_off_duration
+          data:
+            duration: "{{ states('input_datetime.air_fan_time_work') }}"
+    
+    # Автоматическое включение вытяжки
+    - alias: air_fan_auto_on
+      initial_state: true
+      trigger:
+        - platform: template
+          value_template: "{{ (states('sensor.sn_tempr_hum_bathroom_humidity')|int) > (states('input_number.humidity_air_fan_start_level')|int) }}"
+          for: "00:01:15"
+      condition:
+        - condition: state
+          entity_id: input_boolean.air_fan_auto
+          state: 'on'
+      action:
+        - service: switch.turn_on
+          entity_id: switch.sw_double_hood_fan_switch_left
+        - service: timer.start       
+          entity_id: timer.ventilation_off_duration
+          data:
+            duration: "{{ states('input_datetime.air_fan_time_work') }}"
+
+    # Отключение вытяжки
+    - alias: air_fan_off
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: switch.sw_double_hood_fan_switch_left
+          from: 'on'
+          to: 'off'
+        - platform: event
+          event_type: timer.finished
+          event_data:
+            entity_id: timer.ventilation_off_duration
+        - platform: template
+          value_template: "{{ (states('sensor.sn_tempr_hum_bathroom_humidity')|int) < (states('input_number.humidity_air_fan_start_level')|int - 5) }}"
+      action:
+        - service: timer.cancel
+          entity_id: timer.ventilation_off_duration
+        - service: switch.turn_off
+          entity_id: switch.sw_double_hood_fan_switch_left
+
+#=======================================================================
+#                           Таймеры
+#=======================================================================
+  timer:
+    ventilation_off_duration:
+
+#=======================================================================
+#                        Input Number
+#=======================================================================
+  input_number:
+    humidity_air_fan_start_level:
+      min: 10
+      max: 100
+      step: 5
+      unit_of_measurement: '%'
+      icon: mdi:water-percent
+      mode: box
+#=======================================================================
+#                           Input Boolean
+#=======================================================================         
+  input_boolean:
+    air_fan_auto:
+      name: air_fan_auto
+      icon: mdi:auto-fix
+
+#=======================================================================
+#                           Input Datetime
+#=======================================================================
+  input_datetime:
+    air_fan_time_work:
+      has_date: false
+      has_time: true

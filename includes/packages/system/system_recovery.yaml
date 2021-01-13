@@ -1,0 +1,80 @@
+system_recovery:
+
+  #=======================================================================
+  #                       Автоматизации
+  #=======================================================================
+    automation:
+
+      # Предотвращение отключения Aqara выключателей
+      - alias: aqara_sw_turn_off_protection
+        initial_state: true
+        trigger:
+          - platform: state
+            entity_id: 
+              - switch.sw_double_hallway_switch_right
+              - switch.sw_double_hallway_switch_left
+              - switch.sw_double_kitchen_switch_right
+              - switch.sw_single_bedroom_switch
+            to: 'off'
+        mode: parallel
+        action:
+          - choose:
+              # Ванна
+              - conditions: "{{ trigger.entity_id == 'switch.sw_double_hallway_switch_right' }}"
+                sequence:  
+                  - wait_template: "{{ is_state('light.bathroom_spotlight_group', 'unavailable') }}"
+                    timeout: '00:01:00'
+                  - service: switch.turn_on
+                    data:
+                      entity_id: "{{ trigger.entity_id }}"
+                  - wait_template: "{{ is_state('light.bathroom_spotlight_group', 'on') }}"
+                    timeout: '00:01:00'
+                  - delay: 00:00:05
+                  - service: light.turn_off
+                    entity_id: light.bathroom_spotlight_group
+              # Прихожая
+              - conditions: "{{ trigger.entity_id == 'switch.sw_double_hallway_switch_left' }}"
+                sequence:  
+                  - wait_template: "{{ is_state('light.hallway_spotlight_group', 'unavailable') }}"
+                    timeout: '00:01:00'
+                  - service: switch.turn_on
+                    data:
+                      entity_id: "{{ trigger.entity_id }}"
+                  - wait_template: "{{ is_state('light.hallway_spotlight_group', 'on') }}"
+                    timeout: '00:01:00'
+                  - delay: 00:00:05
+                  - service: light.turn_off
+                    entity_id: 
+                      - light.hallway_spotlight_group
+                      - light.bathroom_spotlight_group
+              # Кухня
+              - conditions: "{{ trigger.entity_id == 'switch.sw_double_kitchen_switch_right' }}"
+                sequence:  
+                  - wait_template: "{{ is_state('light.kitchen_spotlight_group', 'unavailable') }}"
+                    timeout: '00:01:00'
+                  - service: switch.turn_on
+                    data:
+                      entity_id: "{{ trigger.entity_id }}"
+                  - wait_template: "{{ is_state('light.kitchen_spotlight_group', 'on') }}"
+                    timeout: '00:01:00'
+                  - delay: 00:00:05
+                  - service: light.turn_off
+                    entity_id: light.kitchen_spotlight_group
+              # Спальня
+              - conditions: "{{ trigger.entity_id == 'switch.sw_single_bedroom_switch' }}"
+                sequence:  
+                  - delay: 00:00:05
+                  - service: switch.turn_on
+                    data:
+                      entity_id: "{{ trigger.entity_id }}"
+                  - delay: 00:00:05
+                  - service: light.turn_off
+                    entity_id: light.lamp_bedroom
+            default:
+              - service: notify.telegram
+                data:
+                  message: |
+                    *Тип:* {{ "\U0001F6A7" }} Системное уведомление   
+                    *Время:* {{ states('sensor.time_date')}}
+                    *Сообщение:*
+                    {{ "\U0000274C" }}Не удалось обработать действия автоматизации: *aqara_sw_turn_off_protection*

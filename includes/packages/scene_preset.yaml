@@ -1,0 +1,122 @@
+#===========================================================================
+#                             Сцены
+#===========================================================================
+scene_preset:
+
+  #===========================================================================
+  #                       Автоматизации
+  #===========================================================================
+  automation:
+    # Запуск сцены из gui
+    - alias: run_scene_gui
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: input_select.scene_select
+      mode: restart
+      action:
+        - choose:
+          # Состояние ВЫБРАТЬ
+          - conditions: "{{ states('input_select.scene_select') == 'Выбрать' }}"
+            sequence:
+              - service: light.turn_off
+                entity_id: light.all_light_group
+              - service: light.turn_on
+                entity_id:
+                  - light.hallway_and_kitchen_spotlight_group
+                  - light.lamp_bedroom
+                data:
+                  brightness_pct: 50
+        - choose:
+          # Сцена КИНО
+          - conditions: "{{ states('input_select.scene_select') == 'Кино' }}"
+            sequence:
+              - service: light.turn_off
+                entity_id: light.all_light_group
+              - service: light.turn_on
+                entity_id: 
+                  - light.kitchen_spotlight_1
+                  - light.bathroom_spotlight_2
+                data:
+                  brightness_pct: 10
+                  color_temp: 333
+              - service: light.turn_on
+                entity_id: light.led_bedroom
+                data:
+                  brightness_pct: 30
+                  rgb_color: [70, 7, 242]
+              - service: >
+                  {% if is_state('media_player.lg_smart_tv', 'off') %}
+                    script.lg_tv_button_power_ir
+                  {% else %}
+                    script.empty_script
+                  {% endif %}
+              - wait_template: "{{ is_state('media_player.lg_smart_tv', 'on') }}"
+                timeout: '00:01:30'
+              - choose:
+                - conditions: "{{ is_state('media_player.lg_smart_tv', 'on') }}"
+                  sequence:
+                    - service: >
+                        {% if is_state('media_player.lg_smart_tv', 'on') %}
+                          script.lg_tv_source_pc
+                        {% else %}
+                          script.empty_script
+                        {% endif %}
+          # Сцена РОМАНТИКА
+          - conditions: "{{ states('input_select.scene_select') == 'Романтика' }}"
+            sequence:
+              - service: light.turn_off
+                entity_id: light.all_light_group
+              - service: light.turn_on
+                entity_id: 
+                  - light.hallway_spotlight_3
+                  - light.bathroom_spotlight_2
+                data:
+                  brightness_pct: 10
+                  color_temp: 333
+              - service: light.turn_on
+                entity_id: 
+                  - light.led_bedroom
+                  - light.led_kitchen
+                data:
+                  brightness_pct: 50
+                  rgb_color: [255, 36, 91]
+          # Сцена ЭКСТРАРОМАНТИКА
+          - conditions: "{{ states('input_select.scene_select') == 'Экстраромантика' }}"
+            sequence:
+              - service: light.turn_off
+                entity_id: light.all_light_group
+              - service: light.turn_on
+                entity_id: 
+                  - light.hallway_spotlight_3
+                  - light.bathroom_spotlight_2
+                data:
+                  brightness_pct: 10
+                  color_temp: 333
+              - service: light.turn_on
+                entity_id: 
+                  - light.led_bedroom
+                  - light.led_kitchen
+                data:
+                  brightness_pct: 50
+                  rgb_color: [255, 0, 0]
+          default:
+            - service: notify.telegram
+              data:
+                message: |
+                  *Тип:* {{ "\U0001F6A7" }} Системное уведомление   
+                  *Время:* {{ states('sensor.time_date')}}
+                  *Сообщение:*
+                  {{ "\U0000274C" }}Не удалось обработать действия автоматизации: *run_scene_gui*
+  
+#=======================================================================
+#                        Input Select
+#=======================================================================
+  input_select:
+    scene_select:
+      options:
+        - Выбрать
+        - Кино
+        - Романтика
+        - Экстраромантика
+      initial: 'Выбрать'

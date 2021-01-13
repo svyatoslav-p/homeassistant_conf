@@ -1,0 +1,367 @@
+#===========================================================================
+#                 Управление кранами горячая, холодная вода
+#===========================================================================
+water_tap:
+
+#===========================================================================
+#                       Автоматизации
+#===========================================================================
+  automation:
+    #=======================================================================
+    # ОПИСАНИЕ: Отключить напряжение на реле управляющее кранами ввода 
+    #           воды после завершения команды
+    # АЛГОРИТМ: Для закрытия/открытия крана необходимо N времени, 
+    #           можно отследить потребляемую мощность реле и на основе этого
+    #           принять решение закончилсяли процесс закрытия/открытия и 
+    #           после выключить реле
+    # ПРИМЕЧАНИЕ: Автоматизация не всегда корректно срабатывает так как реле
+    #            горячей воды иногда не кидает в топик значения потребления! 
+    #            Поэтому дублируем рядом "тупых" автоматизаций по таймеру
+    #=======================================================================
+    
+    # Для реле холодная вода команда ЗАКРЫТЬ
+    - alias: water_cold_raly_off_after_command_close
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: sensor.state_cold_water_relay
+          from: 'Закрывается'
+          to: 'Закрыт'
+      condition:
+        condition: state
+        entity_id: switch.rl_cold_water_switch_l1
+        state: 'on'
+      action:
+        - service: switch.turn_off
+          entity_id: switch.rl_cold_water_switch_l1
+        - service: input_text.set_value
+          data:
+            entity_id: input_text.status_cold_water_tap
+            value: 'Холодная вода закрыта'
+        - service: notify.telegram
+          data:
+            message: |
+              *Тип:* {{ "\U000026A0" }} Уведомление
+              *Время:* {{ states('sensor.time_date')}}
+              *Сообщение:* 
+              {{ "\U00002705" }} {{ states('input_text.status_cold_water_tap')}}
+    
+    # Для реле холодная вода команда ОТКРЫТЬ
+    - alias: water_cold_raly_off_after_command_open
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: sensor.state_cold_water_relay
+          from: 'Открывается'
+          to: 'Открыт'
+      condition:
+        condition: state
+        entity_id: switch.rl_cold_water_switch_l2
+        state: 'on'
+      action:
+        - service: switch.turn_off
+          entity_id: switch.rl_cold_water_switch_l2
+        - service: input_text.set_value
+          data:
+            entity_id: input_text.status_cold_water_tap
+            value: 'Холодная вода открыта'
+        - service: notify.telegram
+          data:
+            message: |
+              *Тип:* {{ "\U000026A0" }} Уведомление
+              *Время:* {{ states('sensor.time_date')}}
+              *Сообщение:* 
+              {{ "\U00002705" }} {{ states('input_text.status_cold_water_tap')}}
+    
+    # Для реле горячая вода команда ЗАКРЫТЬ
+    - alias: water_hot_raly_off_after_command_close
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: sensor.state_hot_water_relay
+          from: 'Закрывается'
+          to: 'Закрыт'
+      condition:
+        condition: state
+        entity_id: switch.rl_hot_water_switch_l1
+        state: 'on'
+      action:
+        - service: switch.turn_off
+          entity_id: switch.rl_hot_water_switch_l1
+        - service: input_text.set_value
+          data:
+            entity_id: input_text.status_hot_water_tap
+            value: 'Горячая вода закрыта'
+        - service: notify.telegram
+          data:
+            message: |
+              *Тип:* {{ "\U000026A0" }} Уведомление
+              *Время:* {{ states('sensor.time_date')}}
+              *Сообщение:* 
+              {{ "\U00002705" }} {{ states('input_text.status_hot_water_tap')}}
+    
+    # Для реле горячая вода команда ОТКРЫТЬ
+    - alias: water_hot_raly_off_after_command_open
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: sensor.state_hot_water_relay
+          from: 'Открывается'
+          to: 'Открыт'
+      condition:
+        condition: state
+        entity_id: switch.rl_hot_water_switch_l2
+        state: 'on'
+      action:
+        - service: switch.turn_off
+          entity_id: switch.rl_hot_water_switch_l2
+        - service: input_text.set_value
+          data:
+            entity_id: input_text.status_hot_water_tap
+            value: 'Горячая вода открыта'
+        - service: notify.telegram
+          data:
+            message: |
+              *Тип:* {{ "\U000026A0" }} Уведомление
+              *Время:* {{ states('sensor.time_date')}}
+              *Сообщение:* 
+              {{ "\U00002705" }} {{ states('input_text.status_hot_water_tap')}}
+    
+    #=======================================================================
+    # ОПИСАНИЕ: Страховочная (тупая) автоматизация снятия напряжения
+    #           с реле после отработки действия
+    # АЛГОРИТМ: Если реле перешло в состояние ON и так 40 сек., то 
+    #           отключаем реле по тайм-ауту
+    #=======================================================================
+    
+    # Для реле холодная вода команда ЗАКРЫТЬ
+    - alias: water_cold_raly_off_timer_close
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: switch.rl_cold_water_switch_l1
+          to: "on"
+          for: "00:00:40"
+      action:
+        - service: switch.turn_off
+          entity_id: switch.rl_cold_water_switch_l1
+        - service: input_text.set_value
+          data:
+            entity_id: input_text.status_cold_water_tap
+            value: 'Холодная вода закрыта (по таймеру)'
+        - service: notify.telegram
+          data:
+            message: |
+              *Тип:* {{ "\U000026A0" }} Уведомление
+              *Время:* {{ states('sensor.time_date')}}
+              *Сообщение:* 
+              {{ "\U00002705" }} {{ states('input_text.status_cold_water_tap')}}
+    
+    # Для реле холодная вода команда ОТКРЫТЬ
+    - alias: water_cold_raly_off_timer_open
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: switch.rl_cold_water_switch_l2
+          to: "on"
+          for: "00:00:40"
+      action:
+        - service: switch.turn_off
+          entity_id: switch.rl_cold_water_switch_l2
+        - service: input_text.set_value
+          data:
+            entity_id: input_text.status_cold_water_tap
+            value: 'Холодная вода открыта (по таймеру)'
+        - service: notify.telegram
+          data:
+            message: |
+              *Тип:* {{ "\U000026A0" }} Уведомление
+              *Время:* {{ states('sensor.time_date')}}
+              *Сообщение:* 
+              {{ "\U00002705" }} {{ states('input_text.status_cold_water_tap')}}
+    
+    # Для реле горячая вода команда ЗАКРЫТЬ
+    - alias: water_hot_raly_off_timer_close
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: switch.rl_hot_water_switch_l1
+          to: "on"
+          for: "00:00:40"
+      action:
+        - service: switch.turn_off
+          entity_id: switch.rl_hot_water_switch_l1
+        - service: input_text.set_value
+          data:
+            entity_id: input_text.status_hot_water_tap
+            value: 'Горячая вода закрыта (по таймеру)'
+        - service: notify.telegram
+          data:
+            message: |
+              *Тип:* {{ "\U000026A0" }} Уведомление
+              *Время:* {{ states('sensor.time_date')}}
+              *Сообщение:* 
+              {{ "\U00002705" }} {{ states('input_text.status_hot_water_tap')}}
+    
+    # Для реле горячая вода команда ОТКРЫТЬ
+    - alias: water_hot_raly_off_timer_open
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: switch.rl_hot_water_switch_l2
+          to: "on"
+          for: "00:00:40"
+      action:
+        - service: switch.turn_off
+          entity_id: switch.rl_hot_water_switch_l2
+        - service: input_text.set_value
+          data:
+            entity_id: input_text.status_hot_water_tap
+            value: 'Горячая вода открыта (по таймеру)'
+        - service: notify.telegram
+          data:
+            message: |
+              *Тип:* {{ "\U000026A0" }} Уведомление
+              *Время:* {{ states('sensor.time_date')}}
+              *Сообщение:* 
+              {{ "\U00002705" }} {{ states('input_text.status_hot_water_tap')}}
+
+    # Защита от протечки по датчикам
+    - alias: water_leak_close
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: 
+            - binary_sensor.sn_water_sink_bathroom_water_leak
+            - binary_sensor.sn_water_sink_bathroom_2_water_leak
+            - binary_sensor.sn_water_sink_kitchen_water_leak
+          to: "on"
+      action:
+        - service: switch.turn_on
+          entity_id: group.water_close_tap_hot_cold
+        - delay: 00:00:05
+        - service: switch.turn_on
+          entity_id: group.water_close_tap_hot_cold
+        - service: notify.telegram
+          data:
+            message: |
+              *Тип:* {{ "\U0001F198" }} Критическое сообщение  
+              *Время:* {{ states('sensor.time_date')}}
+              *Сообщение:* ВНИМАНИЕ!!! Протечка:
+              {% if trigger.entity_id == 'binary_sensor.sn_water_sink_bathroom_water_leak' %} Ванна, раковина
+              {% elif trigger.entity_id == 'binary_sensor.sn_water_sink_bathroom_2_water_leak' %} Ванна, туалет
+              {% elif trigger.entity_id == 'binary_sensor.sn_water_sink_kitchen_water_leak' %} Кухня раковина
+              {% else %}
+              Датчик не определен
+              {% endif %}
+
+#=======================================================================
+#                            Сенсоры
+#=======================================================================
+  sensor:
+    # Состояние реле холодной воды
+    - platform: template
+      sensors:
+        state_cold_water_relay:
+          friendly_name: "Состояние реле крана холодной воды"
+          value_template: >-
+            {% if states('sensor.rl_cold_water_power')|float > 1
+              and is_state('switch.rl_cold_water_switch_l1', 'on') %}
+              Закрывается
+            {% elif states('sensor.rl_cold_water_power')|float < 1
+              and is_state('switch.rl_cold_water_switch_l1', 'on') %}
+              Закрыт
+            {% elif states('sensor.rl_cold_water_power')|float > 1
+              and is_state('switch.rl_cold_water_switch_l2', 'on') %}
+              Открывается
+            {% elif states('sensor.rl_cold_water_power')|float < 1
+              and is_state('switch.rl_cold_water_switch_l2', 'on') %}
+              Открыт
+            {% elif states('sensor.rl_cold_water_power')|float < 1
+              and is_state('switch.rl_cold_water_switch_l1', 'off')
+              and is_state('switch.rl_cold_water_switch_l2', 'off') %}
+              Простаивает
+            {% else %}
+              Неизвестно
+            {% endif %}
+          icon_template: >-
+            {% if states('sensor.rl_cold_water_power')|float > 1
+              and is_state('switch.rl_cold_water_switch_l1', 'on') %}
+              mdi:water-pump-off
+            {% elif states('sensor.rl_cold_water_power')|float > 1
+              and is_state('switch.rl_cold_water_switch_l2', 'on') %}
+              mdi:water-pump
+            {% elif states('sensor.rl_cold_water_power')|float < 1
+              and is_state('switch.rl_cold_water_switch_l1', 'off')
+              and is_state('switch.rl_cold_water_switch_l2', 'off') %}
+              mdi:check-circle-outline
+            {% else %}
+              mdi:alert-circle-outline
+            {% endif %}
+    # Состояния реле горячей воды
+    - platform: template
+      sensors:
+        state_hot_water_relay:
+          friendly_name: "Состояние реле крана горячей воды"
+          value_template: >-
+            {% if states('sensor.rl_hot_water_power')|float > 1
+              and is_state('switch.rl_hot_water_switch_l1', 'on') %}
+              Закрывается
+            {% elif states('sensor.rl_hot_water_power')|float < 1
+              and is_state('switch.rl_hot_water_switch_l1', 'on') %}
+              Закрыт
+            {% elif states('sensor.rl_hot_water_power')|float > 1
+              and is_state('switch.rl_hot_water_switch_l2', 'on') %}
+              Открывается
+            {% elif states('sensor.rl_hot_water_power')|float < 1
+              and is_state('switch.rl_hot_water_switch_l2', 'on') %}
+              Открыт
+            {% elif states('sensor.rl_hot_water_power')|float < 1
+              and is_state('switch.rl_hot_water_switch_l1', 'off')
+              and is_state('switch.rl_hot_water_switch_l2', 'off') %}
+              Простаивает
+            {% else %}
+              Неизвестно
+            {% endif %}
+          icon_template: >-
+            {% if states('sensor.rl_hot_water_power')|float > 1
+              and is_state('switch.rl_hot_water_switch_l1', 'on') %}
+              mdi:water-pump-off
+            {% elif states('sensor.rl_hot_water_power')|float > 1
+              and is_state('switch.rl_hot_water_switch_l2', 'on') %}
+              mdi:water-pump
+            {% elif states('sensor.rl_hot_water_power')|float < 1
+              and is_state('switch.rl_hot_water_switch_l1', 'off')
+              and is_state('switch.rl_hot_water_switch_l2', 'off') %}
+              mdi:check-circle-outline
+            {% else %}
+              mdi:alert-circle-outline
+            {% endif %}
+#=======================================================================
+#                            Группы
+#=======================================================================
+  group:
+    # Закрытие горячей, холодной воды
+    water_close_tap_hot_cold:
+      name: water_close_tap_hot_cold
+      entities:
+        - switch.rl_cold_water_switch_l1
+        - switch.rl_hot_water_switch_l1
+      
+    # Открытие горячей, холодной воды
+    water_open_tap_hot_cold:
+      name: water_open_tap_hot_cold
+      entities:
+        - switch.rl_cold_water_switch_l2
+        - switch.rl_hot_water_switch_l2
+#=======================================================================
+#                        Input Text
+#=======================================================================
+  input_text:
+    # Статус крана горячей воды
+    status_hot_water_tap:
+      name: Статус крана горячей воды
+    
+    # Статус крана холодной воды
+    status_cold_water_tap:
+      name: Статус крана холодной воды

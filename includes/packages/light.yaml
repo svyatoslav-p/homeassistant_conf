@@ -1,0 +1,51 @@
+light_other:
+#=======================================================================
+#                       Автоматизации
+#=======================================================================
+  automation:
+
+    # Выключить весь свет по кнопке в прихожей
+    - alias: light_all_off_button
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: sensor.bt_double_wireless_hallway_action
+          to: 'button_1_single' # left
+      action:
+        - service: light.turn_off
+          entity_id: light.all_light_group
+
+    # Выключить точечники, если включаем люстру (кухня)
+    - alias: light_off_kitchen_hallway_if_on_lamp_kitchen
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: switch.sw_double_kitchen_switch_left
+          to: 'on'
+      condition:
+        - condition: state
+          entity_id: light.hallway_and_kitchen_spotlight_group
+          state: 'on'
+      action:
+        - service: light.turn_off
+          entity_id: light.hallway_and_kitchen_spotlight_group
+
+    # Включение света когда пришли домой
+    - alias: light_on_open_door_spotlight_hallway
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: binary_sensor.sn_entrance_door_contact
+          to: 'on'
+      condition:
+        - condition: state
+          entity_id: binary_sensor.sn_occupancy_hallway_motion
+          state: 'off'
+        - condition: state
+          entity_id: switch.sw_double_kitchen_switch_left
+          state: 'off'
+      action:
+        - service: light.turn_on
+          entity_id: light.hallway_spotlight_group
+          data:
+            brightness_pct: 100

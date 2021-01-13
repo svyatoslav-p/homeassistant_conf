@@ -1,0 +1,21 @@
+# Перевод в мм. рт. столба для sn_tempr_hum_bedroom_pressure
+- platform: template
+  sensors:
+    sn_tempr_hum_bedroom_pressure_mmhg:
+      unit_of_measurement: 'mmHg'
+      value_template: "{{ (states('sensor.sn_tempr_hum_bedroom_pressure')|float * 0.7500637)|round(2) }}"
+      icon_template: mdi:gauge
+    
+# Пересчет относительной влажности в абсолютную      
+- platform: template
+  sensors:
+    bathroom_abs_hum:
+      unit_of_measurement: 'g/m³'
+      value_template: >-
+        {% set h, t = states('sensor.sn_tempr_hum_bathroom_humidity') | float, states('sensor.sn_tempr_hum_bathroom_temperature') %}
+        {% if not h or t == 'unknown' -%}
+          'unknown'
+        {%- else %}
+          {% set t = t | float %}
+        {{ (h*6.112*2.1674*e**((t*17.67)/(t+243.5))/(t+273.15))|round(2) }}
+        {% endif %}
