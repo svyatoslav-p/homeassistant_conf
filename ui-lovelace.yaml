@@ -168,7 +168,7 @@ views:
               name: CPU
               icon: mdi:desktop-tower-monitor
               entities:
-                - entity: sensor.processor_use
+                - entity: sensor.processor_use_percent
               hours_to_show: 72
               color_thresholds:
                 - value: 30
