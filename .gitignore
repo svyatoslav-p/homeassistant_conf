@@ -14,3 +14,4 @@
 /home-assistant.log
 /secrets.yaml
 /webostv.conf
+/includes/packages/_test.yaml

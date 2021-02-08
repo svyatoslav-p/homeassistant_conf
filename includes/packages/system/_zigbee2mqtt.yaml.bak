@@ -1,0 +1,131 @@
+#=====================================================================
+#                    ОПИСАНИЕ: SLS Gateway
+#=====================================================================
+zigbee2mqtt:
+#=====================================================================
+#                        Автоматизация
+#=====================================================================
+  automation:
+
+      # Включим обнаружение ZeegBee устройств
+    - alias: enable_zigbee_join_z2m
+      initial_state: true
+      trigger:
+        platform: state
+        entity_id: input_boolean.zigbee_permit_join_z2m
+        to: 'on'
+      action:
+      - service: mqtt.publish
+        data:
+          topic: zigbee2mqtt/bridge/config/permit_join
+          payload: 'true'
+      - service: timer.start
+        data:
+          entity_id: timer.zigbee_permit_join_z2m
+      
+      # Выключим обнаружение ZeegBee устройств
+    - alias: disable_zigbee_join_z2m
+      initial_state: true
+      trigger:
+      - entity_id: input_boolean.zigbee_permit_join_z2m
+        platform: state
+        to: 'off'
+      action:
+      - service: mqtt.publish
+        data:
+          topic: zigbee2mqtt/bridge/config/permit_join
+          payload: 'false'    
+      - service: timer.cancel
+        data:
+          entity_id: timer.zigbee_permit_join_z2m
+      
+      # Выключим обнаружение ZeegBee устройств по таймеру
+    - alias: disable_zigbee_join_timer_z2m
+      initial_state: true
+      trigger:
+      - platform: event
+        event_type: timer.finished
+        event_data:
+          entity_id: timer.zigbee_permit_join_z2m
+      action:
+      - service: mqtt.publish
+        data:
+          topic: zigbee2mqtt/bridge/config/permit_join
+          payload: 'false'
+      - service: input_boolean.turn_off
+        data:
+          entity_id: input_boolean.zigbee_permit_join_z2m
+      
+      # Уведомление о добавлении нового устройства zigbee (не работает)
+    - alias: zigbee2mqtt_notify_successfull_interview
+      initial_state: false
+      trigger:
+        - platform: mqtt
+          topic: 'zigbee2mqtt/bridge/log'
+      condition:
+        - condition: template
+          value_template: '{{trigger.payload_json.type == "pairing" and trigger.payload_json.message == "interview_successful"}}'
+      action:
+        - service: persistent_notification.create
+          data_template:
+            title: Device joined the zigbee2mqtt2 network
+            message: "\U00002714 Имя: {{trigger.payload_json.meta.friendly_name}},
+                      Производитель: {{trigger.payload_json.meta.vendor}},
+                      Описание: {{trigger.payload_json.meta.description}}"
+        - service: notify.telegram
+          data_template:
+            message: "\U00002705 Z2M_2 - новое устройство - Имя: {{trigger.payload_json.meta.friendly_name}}, Производитель: {{trigger.payload_json.meta.vendor}}, Описание: {{trigger.payload_json.meta.description}}"
+#=====================================================================
+#                          Сенсоры
+#=====================================================================
+  sensor:
+  
+    # Состояние стика
+    - platform: mqtt
+      name: zigbee2mqtt2_bridge_state
+      state_topic: "zigbee2mqtt/bridge/state"
+      icon: mdi:router-wireless 
+    
+    # Времени он-лайн [не работает, нужна доработка]
+    #- platform: mqtt
+    #  name: zigbee2mqtt_bridge_uptime
+    #  state_topic: "zigbee2mqtt_start_at"
+    #  value_template: '{{ as_timestamp(now()) - value | int }}'
+    #  unit_of_measurement: 's'
+    #  force_update: true
+    #  icon: mdi:av-timer  
+  
+    # Версия Zigbee2mqtt
+    - platform: mqtt
+      name: zigbee2mqtt_version
+      state_topic: "zigbee2mqtt/bridge/config"
+      value_template: "{{ value_json.version }}"
+      icon: mdi:zigbee  
+  
+    # Версия прошивки координатора
+    - platform: mqtt
+      name: zigbee2mqtt_coordinator_version
+      state_topic: "zigbee2mqtt/bridge/config"
+      value_template: "{{ value_json.coordinator }}"
+      icon: mdi:chip  
+  
+    # Канал
+    - platform: mqtt
+      name: zigbee2mqtt_network_channel
+      state_topic: "zigbee2mqtt/bridge/config"
+      value_template: "{{ value_json.network.channel }}"
+      icon: mdi:wifi
+#=====================================================================
+#                          Таймеры
+#===================================================================== 
+  timer:
+    # Время до автоотключения обнаржуения ZeegBee устройств
+    zigbee_permit_join_z2m:
+      duration: 600
+#=====================================================================
+#                         Input Boolean
+#=====================================================================           
+  input_boolean:
+    zigbee_permit_join_z2m:
+      initial: off
+      icon: mdi:cellphone-wireless

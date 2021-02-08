@@ -1,0 +1,108 @@
+#=======================================================================
+# ОПИСАНИЕ: SLS Gateway
+#=======================================================================
+sls_gateway:
+
+#=======================================================================
+#                        Автоматизация
+#=======================================================================
+  automation:
+
+    # Уведомление если шлюза нет в MQTT
+    - alias: notification_offline_sls_gateway
+      initial_state: true
+      trigger:
+        platform: state
+        entity_id: binary_sensor.sls_gateway_bridge_state
+        to: 'off'
+      action:
+        - service: notify.telegram
+          data:
+            message: |
+              *Тип:* {{ "\U0001F6A7" }} Системное уведомление 
+              *Время:* {{ states('sensor.time_date')}}
+              *Сообщение:*
+              {{ "\U0000274C" }} Шлюз SLS отключен от MQTT.
+
+    # Уведомление если шлюз появился в MQTT
+    - alias: notification_online_sls_gateway
+      initial_state: true
+      trigger:
+        platform: state
+        entity_id: binary_sensor.sls_gateway_bridge_state
+        to: 'on'
+      action:
+        - service: notify.telegram
+          data:
+            message: |
+              *Тип:* {{ "\U0001F6A7" }} Системное уведомление 
+              *Время:* {{ states('sensor.time_date')}}
+              *Сообщение:*
+              {{ "\U00002705" }} Шлюз SLS подключен к MQTT.
+
+#=======================================================================
+#                          Сенсоры
+#=======================================================================
+  sensor:
+    # Время он-лайн
+    - platform: mqtt
+      name: sls_gateway_uptime
+      icon: mdi:timeline-clock
+      unit_of_measurement: ""
+      availability_topic: "Zigbee26E4/bridge/state"
+      state_topic: "Zigbee26E4/bridge/config"
+      value_template: >
+        {%- set test = value_json.Uptime |int -%}
+        {%- set minutes = ((test % 3600) / 60) | int %}
+        {%- set hours = ((test % 86400) / 3600) | int %}
+        {%- set days = (test / 86400) | int -%}
+          
+        {%if days > 0 %}{{days}} дн. {% endif %}{%if hours > 0 %}{{hours}} ч. {% endif %}{%if minutes > 0%}{{ minutes}} мин.{%else%} <1мин.{%endif%}
+
+    # IP
+    - platform: mqtt
+      name: sls_gateway_ip
+      icon: mdi:ip-network-outline
+      state_topic: "Zigbee26E4/bridge/config"
+      value_template: "{{ value_json.IP }}"
+
+    # RSSI Wi-Fi
+    - platform: mqtt
+      name: sls_gateway_rssi
+      icon: mdi:access-point-network
+      state_topic: "Zigbee26E4/bridge/config"
+      unit_of_measurement: 'dB'
+      value_template: "{{ value_json.RSSI }}"
+
+    # Version
+    - platform: mqtt
+      name: sls_gateway_version
+      icon: mdi:alpha-v-circle-outline
+      state_topic: "Zigbee26E4/bridge/config"
+      value_template: "{{ value_json.Version }}"
+
+    # FreeMem
+    - platform: mqtt
+      name: sls_gateway_free_mem
+      icon: mdi:memory
+      state_topic: "Zigbee26E4/bridge/config"
+      unit_of_measurement: 'Byte'
+      value_template: "{{ value_json.FreeMem }}"
+
+  binary_sensor:
+
+    # Permit join state
+    - platform: mqtt
+      name: sls_gateway_paring
+      state_topic: "Zigbee26E4/bridge/config"
+      payload_on: "True"
+      payload_off: "False"
+      value_template: '{{ value_json.permit_join }}'
+
+    # Bridge state
+    - platform: mqtt
+      name: sls_gateway_bridge_state
+      state_topic: "Zigbee26E4/bridge/state"
+      payload_on: "online"
+      payload_off: "offline"
+

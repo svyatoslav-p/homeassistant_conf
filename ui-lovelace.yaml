@@ -858,6 +858,63 @@ views:
             cards:
             - type: markdown
               content: '**Медиаплеер Kodi**'      
+            - type: horizontal-stack
+              cards:
+              #Кнопка КАНАЛ 1
+              - type: custom:button-card
+                icon: mdi:television-box
+                name: 1
+                tap_action:
+                  action: call-service
+                  service: media_player.play_media
+                  service_data:
+                    entity_id: media_player.raspberrypi
+                    media_content_type: "CHANNEL"
+                    media_content_id: 122
+              #Кнопка КАНАЛ 35
+              - type: custom:button-card
+                icon: mdi:television-box
+                name: 35
+                tap_action:
+                  action: call-service
+                  service: media_player.play_media
+                  service_data:
+                    entity_id: media_player.raspberrypi
+                    media_content_type: "CHANNEL"
+                    media_content_id: 79
+              #Кнопка КАНАЛ 68
+              - type: custom:button-card
+                icon: mdi:television-box
+                name: 68
+                tap_action:
+                  action: call-service
+                  service: media_player.play_media
+                  service_data:
+                    entity_id: media_player.raspberrypi
+                    media_content_type: "CHANNEL"
+                    media_content_id: 67
+              #Кнопка КАНАЛ 97
+              - type: custom:button-card
+                icon: mdi:television-box
+                name: 97
+                tap_action:
+                  action: call-service
+                  service: media_player.play_media
+                  service_data:
+                    entity_id: media_player.raspberrypi
+                    media_content_type: "CHANNEL"
+                    media_content_id: 195
+              #Кнопка КАНАЛ 120
+              - type: custom:button-card
+                icon: mdi:television-box
+                name: 120
+                tap_action:
+                  action: call-service
+                  service: media_player.play_media
+                  service_data:
+                    entity_id: media_player.raspberrypi
+                    media_content_type: "CHANNEL"
+                    media_content_id: 132
             - type: grid
               columns: 3
               square: false
