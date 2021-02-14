@@ -1,5 +1,29 @@
-
 gateway_3:
+  #=======================================================================
+  #                       Автоматизации
+  #=======================================================================
+  automation:
+    # Рестарт шлюза если отвалился (при наличии его в сети)
+    - alias: gw3_recovery_to_system
+      initial_state: true
+      trigger:
+        - platform: state
+          entity_id: sensor.0x588e81fffedaba82_gateway
+          to: "unknown"
+          for: "00:00:10"
+      condition:
+        - condition: state
+          entity_id: binary_sensor.gw3_status
+          state: 'on'
+      action:
+        - service: shell_command.restart_gw3
+        - service: notify.telegram
+          data:
+            message: |
+              *Тип:* {{ "\U0001F6A7" }} Системное уведомление   
+              *Время:* {{ states('sensor.time_date')}}
+              *Сообщение:*
+              {{ "\U0000274C" }}Шлюз GW3 отвалился. Команда перезагрузки отправлена
   #=======================================================================
   #                            Сенсоры
   #=======================================================================
@@ -111,3 +135,9 @@ gateway_3:
         entity_id: remote.0x588e81fffedaba82_pair
         data:
           command: ftp
+  #=======================================================================
+  #                           Shell Command
+  #=======================================================================
+  shell_command:
+    # Перезагрузка сервера
+    restart_gw3: ssh admin@192.168.1.119 'reboot'
