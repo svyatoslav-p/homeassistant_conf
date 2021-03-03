@@ -125,10 +125,8 @@ gateway_3:
   script:
     reboot_gateway3:
       sequence:
-      - service: remote.send_command
-        entity_id: remote.0x588e81fffedaba82_pair
-        data:
-          command: reboot
+      - service: shell_command.restart_gw3
+
     ftp_gateway3:
       sequence:
       - service: remote.send_command
