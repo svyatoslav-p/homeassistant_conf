@@ -49,6 +49,12 @@ climat_air_conditioner:
       sequence:
         - service: timer.cancel
           entity_id: timer.break_air_conditioning
+
+    # Выключение кондиционера
+    conditioner_power_off:
+      sequence:
+        - service: climate.turn_off
+          entity_id: climate.air_conditioner 
 #=======================================================================
 #                           Таймеры
 #=======================================================================

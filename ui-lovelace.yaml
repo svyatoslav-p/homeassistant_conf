@@ -1028,14 +1028,15 @@ views:
           content: '**Кондиционер**'
         - type: custom:simple-thermostat
           entity: climate.air_conditioner 
-          show_header: false
-          step_layout: row          
           step_size: 1
-          label:
-            temperature: Температура
+          layout:
+            step: row
+            mode:
+              names: false
+          header: false
           control:
-            _names: false
-            _headings: false   
+            hvac:
+              _name: Режим
         - type: grid
           columns: 4
           square: false
