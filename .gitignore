@@ -11,7 +11,10 @@
 # Файлы
 /.HA_VERSION
 /ha_v2.db
+/ha_v2.db-shm
+/ha_v2.db-wal
 /home-assistant.log
 /secrets.yaml
 /webostv.conf
 /includes/packages/_test.yaml
+

@@ -1234,7 +1234,10 @@ views:
             - entity: input_boolean.alarm_clock_toggle
               name: Будильник ВКЛ/ВЫКЛ
             - entity: input_datetime.alarm_clock_time
-              name: Время будильника
+              name: Время будильника муж
+              icon: mdi:clock
+            - entity: input_datetime.alarm_clock_time_2
+              name: Время будильника жена
               icon: mdi:clock
             - entity: sensor.alarm_clock_sel_days
               name: Выбраны дни

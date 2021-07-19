@@ -9,6 +9,8 @@ alarm_clock:
       trigger:
         - platform: time
           at: input_datetime.alarm_clock_time
+        - platform: time
+          at: input_datetime.alarm_clock_time_2
       condition:
         - condition: state
           entity_id: input_boolean.alarm_clock_toggle
@@ -126,6 +128,10 @@ alarm_clock:
   input_datetime:
 
     alarm_clock_time:
+      has_date: false
+      has_time: true
+
+    alarm_clock_time_2:
       has_date: false
       has_time: true
 
