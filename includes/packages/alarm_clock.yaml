@@ -41,6 +41,35 @@ alarm_clock:
             temperature: "{{ states('input_number.alarm_clock_conditioner_tempr') | int}}"
             hvac_mode: "{{ states('input_select.alarm_clock_conditioner_mode') }}"
 
+    # Напоминание если забыли выключить все после ухода
+    - alias: alarm_clock_reminder_device_poweroff
+      initial_state: true
+      trigger:
+        - platform: time
+          at: "10:00"
+      condition:
+        condition: and
+        conditions:
+          - condition: state
+            entity_id: input_boolean.alarm_clock_toggle
+            state: 'on'
+          - "{{ is_state('input_boolean.alarm_clock_set_' ~ ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'][now().weekday()], 'on') }}"
+          - condition: or
+            conditions:
+              - condition: state
+                entity_id:
+                  - climate.air_conditioner
+                  - media_player.lg_smart_tv
+                  - light.all_light_group
+                state: 'on'
+      action:
+        - service: notify.telegram
+          data:
+            message: |
+              *Тип:* {{ "\U000026A0" }} Уведомление
+              *Время:* {{ states('sensor.time_date')}}
+              *Сообщение:* 
+              {{ "\U00002757" }}Возможно никого нет дома, а устройства выключить забыли
 #=======================================================================
 #                           Скрипты
 #=======================================================================
