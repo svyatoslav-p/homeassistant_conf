@@ -20,61 +20,61 @@
 #                    Светильники Philips Zhirui
 #=======================================================================
 
-# Кухня светильник 1
-- platform: xiaomi_miio
-  name:  kitchen_spotlight_1
-  host: 192.168.1.67
-  token: !secret kitchen_spot_1_token
-  model: philips.light.downlight
+## Кухня светильник 1
+# - platform: xiaomi_miio
+#   name:  kitchen_spotlight_1
+#   host: 192.168.1.67
+#   token: !secret kitchen_spot_1_token
+#   model: philips.light.downlight
 
-# Кухня светильник 2
-- platform: xiaomi_miio
-  name: kitchen_spotlight_2
-  host: 192.168.1.41
-  token: !secret kitchen_spot_2_token
-  model: philips.light.downlight
+## Кухня светильник 2
+# - platform: xiaomi_miio
+#   name: kitchen_spotlight_2
+#   host: 192.168.1.41
+#   token: !secret kitchen_spot_2_token
+#   model: philips.light.downlight
 
-# Ванная светильник 1
-- platform: xiaomi_miio
-  name: bathroom_spotlight_1
-  host: 192.168.1.135
-  token: !secret bathroom_spot_1_token
-  model: philips.light.downlight
+## Ванная светильник 1
+# - platform: xiaomi_miio
+#   name: bathroom_spotlight_1
+#   host: 192.168.1.135
+#   token: !secret bathroom_spot_1_token
+#   model: philips.light.downlight
 
-# Ванная светильник 2
-- platform: xiaomi_miio
-  name: bathroom_spotlight_2
-  host: 192.168.1.47
-  token: !secret bathroom_spot_2_token
-  model: philips.light.downlight
+## Ванная светильник 2
+# - platform: xiaomi_miio
+#   name: bathroom_spotlight_2
+#   host: 192.168.1.47
+#   token: !secret bathroom_spot_2_token
+#   model: philips.light.downlight
 
-# Ванная светильник 3
-- platform: xiaomi_miio
-  name: bathroom_spotlight_3
-  host: 192.168.1.98
-  token: !secret bathroom_spot_3_token
-  model: philips.light.downlight
+## Ванная светильник 3
+# - platform: xiaomi_miio
+#   name: bathroom_spotlight_3
+#   host: 192.168.1.98
+#   token: !secret bathroom_spot_3_token
+#   model: philips.light.downlight
 
-# Прихожая светильник 1
-- platform: xiaomi_miio
-  name: hallway_spotlight_1
-  host: 192.168.1.49
-  token: !secret hallway_spot_1_token
-  model: philips.light.downlight
+## Прихожая светильник 1
+# - platform: xiaomi_miio
+#   name: hallway_spotlight_1
+#   host: 192.168.1.49
+#   token: !secret hallway_spot_1_token
+#   model: philips.light.downlight
 
-# Прихожая светильник 2
-- platform: xiaomi_miio
-  name: hallway_spotlight_2
-  host: 192.168.1.140
-  token:  !secret hallway_spot_2_token
-  model: philips.light.downlight
+## Прихожая светильник 2
+# - platform: xiaomi_miio
+#   name: hallway_spotlight_2
+#   host: 192.168.1.140
+#   token:  !secret hallway_spot_2_token
+#   model: philips.light.downlight
 
-# Прихожая светильник 3
-- platform: xiaomi_miio
-  name: hallway_spotlight_3
-  host: 192.168.1.145
-  token:  !secret hallway_spot_3_token
-  model: philips.light.downlight
+## Прихожая светильник 3
+# - platform: xiaomi_miio
+#   name: hallway_spotlight_3
+#   host: 192.168.1.145
+#   token:  !secret hallway_spot_3_token
+#   model: philips.light.downlight
 
 #=======================================================================
 #                         Группы освещения
