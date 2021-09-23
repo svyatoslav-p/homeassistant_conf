@@ -46,7 +46,7 @@ alarm_clock:
       initial_state: true
       trigger:
         - platform: time
-          at: "10:00"
+          at: "09:30"
       condition:
         condition: and
         conditions:
@@ -57,10 +57,13 @@ alarm_clock:
           - condition: or
             conditions:
               - condition: state
-                entity_id:
-                  - climate.air_conditioner
-                  - media_player.lg_smart_tv
-                  - light.all_light_group
+                entity_id: media_player.lg_smart_tv
+                state: 'on'
+              - condition: state
+                entity_id: climate.air_conditioner
+                state: 'on'
+              - condition: state
+                entity_id: light.all_light_group
                 state: 'on'
       action:
         - service: notify.telegram

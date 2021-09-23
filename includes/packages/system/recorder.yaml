@@ -33,6 +33,7 @@ recorder:
         # Другие датчики, сенсоры
         - binary_sensor.sn_entrance_door_contact
         - binary_sensor.sn_occupancy_hallway_motion
+        - sensor.voltage_level
       
   #=======================================================================
   #                       Автоматизации

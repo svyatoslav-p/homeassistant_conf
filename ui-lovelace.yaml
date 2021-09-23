@@ -71,6 +71,19 @@ views:
             show_state: true
             state_color: false
             show_icon: true
+          - type: custom:mini-graph-card
+            name: Напряжение сети
+            icon: mdi:alpha-v-circle
+            entities:
+              - entity: sensor.voltage_level
+            hours_to_show: 72
+            color_thresholds:
+              - value: 215
+                color: "#e6c302"
+              - value: 225
+                color: "#00bd5b"
+              - value: 230
+                color: "#e67802"
           - type: entities
             show_header_toggle: false
             entities:
