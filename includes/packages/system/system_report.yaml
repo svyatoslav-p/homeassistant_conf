@@ -84,22 +84,22 @@ system_report:
               Температура сервера: *{{ states('sensor.cpu_temp')}}*° {{ "\U000026A0" }}
               
       # Telegram:  уведомление о проблеме с питанием
-    - alias: notification_bad_power
-      initial_state: true
-      trigger:
-        platform: state
-        entity_id: sensor.state_throtlling
-        from: '0'
-      action:
-        - service: notify.telegram
-          data:
-            message: |
-              *Тип:* {{ "\U0001F198" }} Критическое сообщение  
-              *Время:* {{ states('sensor.time_date')}}
-              *Сообщение:*
-              Обнаружена проблема с питанием сервера.
-              Датчик тротллинга: *{{ states('sensor.state_throtlling')}}* {{ "\U000026A0" }}
-              При значении отличном от 0 есть проблемы.
+    # - alias: notification_bad_power
+    #   initial_state: true
+    #   trigger:
+    #     platform: state
+    #     entity_id: sensor.state_throtlling
+    #     from: '0'
+    #   action:
+    #     - service: notify.telegram
+    #       data:
+    #         message: |
+    #           *Тип:* {{ "\U0001F198" }} Критическое сообщение  
+    #           *Время:* {{ states('sensor.time_date')}}
+    #           *Сообщение:*
+    #           Обнаружена проблема с питанием сервера.
+    #           Датчик тротллинга: *{{ states('sensor.state_throtlling')}}* {{ "\U000026A0" }}
+    #           При значении отличном от 0 есть проблемы.
           
       # Telegram: уведомление о проблеме с напряжением в доме
     - alias: notification_level_voltage_home

@@ -110,29 +110,29 @@ views:
       - type: vertical-stack
         cards:
           - type: markdown
-            content: '**Raspberry PI**'
+            content: '**Сервер Host**'
           - type: grid
             columns: 3
             square: false
             cards:
               - type: custom:button-card
-                name: Raspberry
+                name: Сервер
                 icon: mdi:power
                 styles:
                   card:
                     - font-size: 12px
                 tap_action:
                   action: call-service
-                  service: script.poweroff_server
+                  service: hassio.host_shutdown
               - type: custom:button-card
-                name: Raspberry
+                name: Сервер
                 icon: mdi:restart
                 styles:
                   card:
                     - font-size: 12px
                 tap_action:
                   action: call-service
-                  service: script.restart_server
+                  service: hassio.host_reboot
               - type: custom:button-card
                 name: Обновить SpeedTest
                 icon: mdi:speedometer
@@ -149,11 +149,8 @@ views:
               - entity: sensor.last_boot_custom
                 name: Онлайн
                 icon: mdi:av-timer
-              - entity: sensor.state_throtlling
-                name: Питание
-                icon: mdi:power-plug
               - entity: sensor.disk_free
-                name: Свободно на диске
+                name: Свободно на диске (root)
             show_name: true
             show_state: true
             state_color: false
@@ -216,7 +213,7 @@ views:
                 name: Последняя копия
                 icon: mdi:buffer
               - type: divider
-              - entity: sensor.ipv4_address_eth0
+              - entity: sensor.ipv4_address_enp11s0
                 name: Адрес в сети
                 icon: mdi:wan
               - entity: sensor.speedtest_download
@@ -573,7 +570,7 @@ views:
               icon: true
               source: true
           - type: custom:mini-media-player
-            entity: media_player.raspberrypi
+            entity: media_player.serv_ds_1100
             name: Медиаплеер Kodi
             group: true
             hide:
@@ -881,53 +878,53 @@ views:
                   action: call-service
                   service: media_player.play_media
                   service_data:
-                    entity_id: media_player.raspberrypi
+                    entity_id: media_player.serv_ds_1100
                     media_content_type: "CHANNEL"
-                    media_content_id: 122
-              #Кнопка КАНАЛ 35
+                    media_content_id: 128
+              #Кнопка КАНАЛ 32
               - type: custom:button-card
                 icon: mdi:television-box
-                name: 35
+                name: 32
                 tap_action:
                   action: call-service
                   service: media_player.play_media
                   service_data:
-                    entity_id: media_player.raspberrypi
+                    entity_id: media_player.serv_ds_1100
                     media_content_type: "CHANNEL"
-                    media_content_id: 79
-              #Кнопка КАНАЛ 68
+                    media_content_id: 186
+              #Кнопка КАНАЛ 70
               - type: custom:button-card
                 icon: mdi:television-box
-                name: 68
+                name: 70
                 tap_action:
                   action: call-service
                   service: media_player.play_media
                   service_data:
-                    entity_id: media_player.raspberrypi
+                    entity_id: media_player.serv_ds_1100
                     media_content_type: "CHANNEL"
-                    media_content_id: 67
-              #Кнопка КАНАЛ 97
+                    media_content_id: 30
+              #Кнопка КАНАЛ 98
               - type: custom:button-card
                 icon: mdi:television-box
-                name: 97
+                name: 98
                 tap_action:
                   action: call-service
                   service: media_player.play_media
                   service_data:
-                    entity_id: media_player.raspberrypi
+                    entity_id: media_player.serv_ds_1100
                     media_content_type: "CHANNEL"
-                    media_content_id: 195
-              #Кнопка КАНАЛ 120
+                    media_content_id: 220
+              #Кнопка КАНАЛ 139
               - type: custom:button-card
                 icon: mdi:television-box
-                name: 120
+                name: 139
                 tap_action:
                   action: call-service
                   service: media_player.play_media
                   service_data:
-                    entity_id: media_player.raspberrypi
+                    entity_id: media_player.serv_ds_1100
                     media_content_type: "CHANNEL"
-                    media_content_id: 132
+                    media_content_id: 62
             - type: grid
               columns: 3
               square: false
@@ -1008,8 +1005,6 @@ views:
               entities:
                 - entity: script.kodi_quit
                   name: Закрыть Kodi
-                - entity: script.kodi_run
-                  name: Открыть Kodi
 
 #=======================================================================
 #                            Климат

@@ -1,28 +1,24 @@
-2021-09-23 22:02:26 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration xiaomi_gateway3 which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
-2021-09-23 22:02:26 WARNING (SyncWorker_1) [homeassistant.loader] We found a custom integration smartir which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
-2021-09-23 22:02:26 WARNING (SyncWorker_2) [homeassistant.loader] We found a custom integration hacs which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
-2021-09-23 22:02:40 WARNING (MainThread) [homeassistant.setup] Setup of input_text is taking over 10 seconds.
-2021-09-23 22:02:41 ERROR (MainThread) [homeassistant.components.mqtt] Failed to connect to MQTT server due to exception: [Errno -3] Try again
-2021-09-23 22:02:43 ERROR (MainThread) [homeassistant] Error doing job: Task exception was never retrieved
+2021-10-02 18:52:18 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration xiaomi_gateway3 which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2021-10-02 18:52:18 WARNING (SyncWorker_2) [homeassistant.loader] We found a custom integration hacs which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2021-10-02 18:52:18 WARNING (SyncWorker_1) [homeassistant.loader] We found a custom integration smartir which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2021-10-02 18:52:23 ERROR (MainThread) [custom_components.smartir.climate] Unable to update from temperature sensor: could not convert string to float: 'unavailable'
+2021-10-02 18:52:23 ERROR (MainThread) [custom_components.smartir.climate] Unable to update from humidity sensor: could not convert string to float: 'unavailable'
+2021-10-02 18:52:25 ERROR (MainThread) [homeassistant.components.mqtt] Failed to connect to MQTT server due to exception: [Errno -3] Try again
+2021-10-02 18:52:25 ERROR (MainThread) [homeassistant] Error doing job: Task exception was never retrieved
 Traceback (most recent call last):
   File "/config/custom_components/smartir/climate.py", line 404, in _async_power_sensor_changed
     if new_state.state == old_state.state:
 AttributeError: 'NoneType' object has no attribute 'state'
-2021-09-23 22:02:43 ERROR (MainThread) [custom_components.smartir.climate] Unable to update from humidity sensor: could not convert string to float: 'unavailable'
-2021-09-23 22:02:43 ERROR (MainThread) [custom_components.smartir.climate] Unable to update from temperature sensor: could not convert string to float: 'unavailable'
-2021-09-23 22:02:44 ERROR (MainThread) [custom_components.smartir.climate] Unable to update from temperature sensor: could not convert string to float: 'unavailable'
-2021-09-23 22:02:44 ERROR (MainThread) [custom_components.smartir.climate] Unable to update from humidity sensor: could not convert string to float: 'unavailable'
-2021-09-23 22:09:49 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
-2021-09-23 22:09:49 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
-2021-09-23 22:09:49 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
-2021-09-23 22:09:49 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
-2021-09-23 22:09:49 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
-2021-09-23 22:09:49 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
-2021-09-23 22:09:49 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
-2021-09-23 22:09:49 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
-2021-09-23 22:09:49 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
-2021-09-23 22:09:49 ERROR (MainThread) [custom_components.smartir.climate] Unable to update from temperature sensor: could not convert string to float: 'unavailable'
-2021-09-23 22:09:49 ERROR (MainThread) [custom_components.smartir.climate] Unable to update from humidity sensor: could not convert string to float: 'unavailable'
-2021-09-23 22:09:59 ERROR (MainThread) [homeassistant.components.shell_command] Error running command: `ssh admin@192.168.1.119 'reboot'`, return code: 255
-NoneType: None
-2021-09-23 22:10:00 ERROR (MainThread) [homeassistant.components.hassio.handler] Timeout on /homeassistant/restart request
+2021-10-02 18:54:18 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
+2021-10-02 18:54:18 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
+2021-10-02 18:54:18 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
+2021-10-02 18:54:18 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
+2021-10-02 18:54:18 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
+2021-10-02 18:54:18 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
+2021-10-02 18:54:18 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
+2021-10-02 18:54:18 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
+2021-10-02 18:54:18 WARNING (MainThread) [homeassistant.components.automation.check_devices_status_unavailable] check_devices_status_unavailable: Already running
+2021-10-02 18:54:18 ERROR (MainThread) [custom_components.smartir.climate] Unable to update from temperature sensor: could not convert string to float: 'unavailable'
+2021-10-02 18:54:18 ERROR (MainThread) [custom_components.smartir.climate] Unable to update from humidity sensor: could not convert string to float: 'unavailable'
+2021-10-02 18:54:27 ERROR (MainThread) [homeassistant.components.hassio.handler] Client error on /host/shutdown request Server disconnected
+2021-10-02 18:54:27 ERROR (MainThread) [homeassistant.components.hassio] Error on Supervisor API: 

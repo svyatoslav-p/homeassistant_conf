@@ -115,12 +115,12 @@ alarm_clock:
                           data:
                             volume_level: "{{ states('input_number.alarm_clock_tv_volume') | int /100 }}"
                         - service: media_player.play_media
-                          entity_id: media_player.raspberrypi
+                          entity_id: media_player.serv_ds_1100
                           data:
                             media_content_type: "CHANNEL"
                             media_content_id: "{{ states('input_number.alarm_clock_tv_ch') | int}}"
                         - service: media_player.volume_set
-                          entity_id:  media_player.raspberrypi
+                          entity_id:  media_player.serv_ds_1100
                           data:
                             volume_level: 1
                         - service: script.turn_on
