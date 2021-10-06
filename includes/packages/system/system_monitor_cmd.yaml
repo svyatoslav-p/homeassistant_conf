@@ -170,7 +170,7 @@ system_monitor_cmd:
     # Температура RPI CPU
     - platform: command_line
       name: cpu_temp
-      command: "cat /sys/class/thermal/thermal_zone0/temp"
+      command: "cat /sys/class/thermal/thermal_zone3/temp"
       unit_of_measurement: "°C"
       value_template: '{{ (value | multiply(0.001)) | round(1) }}'
         

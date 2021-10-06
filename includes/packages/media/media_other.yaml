@@ -54,7 +54,7 @@ media_other:
                     entity_id: media_player.serv_ds_1100
                     data:
                       media_content_type: "CHANNEL"
-                      media_content_id: 122
+                      media_content_id: 128
                   - service: media_player.volume_set
                     entity_id:  media_player.serv_ds_1100
                     data:
