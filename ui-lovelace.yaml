@@ -9,20 +9,20 @@ views:
       - type: vertical-stack
         cards:
           - type: markdown
-            content: '**Home Assistant**'
+            content: '**Быстрые действия**'
           - type: grid
-            columns: 4
+            columns: 3
             square: false
             cards:
               - type: custom:button-card
-                name: Сервер HA
-                icon: mdi:restart
+                name: Список покупок
+                icon: mdi:sync
                 styles:
                   card:
                     - font-size: 12px
                 tap_action:
                   action: call-service
-                  service: homeassistant.restart
+                  service: script.update_shopping_list
               - type: custom:button-card
                 name: Выкл все
                 icon: mdi:sleep
@@ -34,6 +34,30 @@ views:
                   service: script.turn_on
                   service_data:
                     entity_id: script.all_turn_off_dev
+              - type: custom:button-card
+                name: Заглушка
+                icon: mdi:sync-alert
+                styles:
+                  card:
+                    - font-size: 12px
+                tap_action:
+                  action: call-service
+                  service: script.empty_script
+          - type: markdown
+            content: '**Home Assistant**'
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: custom:button-card
+                name: Сервер HA
+                icon: mdi:restart
+                styles:
+                  card:
+                    - font-size: 12px
+                tap_action:
+                  action: call-service
+                  service: homeassistant.restart
               - type: custom:button-card
                 name: Статус unavailable
                 icon: mdi:exclamation-thick
@@ -684,46 +708,6 @@ views:
                   service: script.lg_tv_source_pi
                   service_data:
                     entity_id: media_player.lg_smart_tv 
-              #Кнопка КАНАЛ-
-              - type: custom:button-card
-                icon: mdi:chevron-down-circle-outline
-                tap_action:
-                  action: call-service
-                  service: script.lg_tv_button_ch_down
-                  service_data:
-                    entity_id: media_player.lg_smart_tv     
-              # Источник PLEX
-              - type: custom:button-card
-                name: PLEX
-                icon: mdi:plex
-                styles:
-                  card:
-                    - font-size: 13px
-                tap_action:
-                  action: call-service
-                  service: script.lg_tv_source_plex
-                  service_data:
-                    entity_id: media_player.lg_smart_tv
-              # Источник SS IPTV
-              - type: custom:button-card
-                name: SS IPTV
-                icon: mdi:television-box
-                styles:
-                  card:
-                    - font-size: 13px
-                tap_action:
-                  action: call-service
-                  service: script.lg_tv_source_ssiptv
-                  service_data:
-                    entity_id: media_player.lg_smart_tv
-              #Кнопка КАНАЛ+
-              - type: custom:button-card
-                icon: mdi:chevron-up-circle-outline
-                tap_action:
-                  action: call-service
-                  service: script.lg_tv_button_ch_up
-                  service_data:
-                    entity_id: media_player.lg_smart_tv
             - type: markdown
               content: '****'     
             - type: grid
@@ -880,7 +864,7 @@ views:
                   service_data:
                     entity_id: media_player.serv_ds_1100
                     media_content_type: "CHANNEL"
-                    media_content_id: 128
+                    media_content_id: 176
               #Кнопка КАНАЛ 32
               - type: custom:button-card
                 icon: mdi:television-box
@@ -1005,7 +989,40 @@ views:
               entities:
                 - entity: script.kodi_quit
                   name: Закрыть Kodi
-
+          Яндекс Станция:
+            type: vertical-stack
+            cards:
+            - type: custom:mini-media-player
+              entity: media_player.yandex_station
+              artwork: none
+              sound_mode: icon
+              shortcuts:
+                attribute: sound_mode
+                buttons:
+                  - icon: 'mdi:account-voice'
+                    id: Произнеси текст
+                    type: sound_mode
+                  - icon: 'mdi:robot'
+                    id: Выполни команду
+                    type: sound_mode
+                  - icon: 'mdi:playlist-star'
+                    id: включи мою любимую музыку вперемешку
+                    type: command
+                  - icon: 'mdi:playlist-music'
+                    id: включи плейлист дня
+                    type: command
+                  - icon: 'mdi:heart'
+                    id: лайк
+                    type: command
+                  - icon: 'mdi:heart-off'
+                    id: снять лайк
+                    type: command
+                columns: 6
+              hide:
+                sound_mode: true
+                runtime: false
+              tts:
+                platform: yandex_station
 #=======================================================================
 #                            Климат
 #=======================================================================

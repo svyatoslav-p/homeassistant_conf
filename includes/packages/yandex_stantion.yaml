@@ -1,0 +1,35 @@
+yandex_stansion:
+#=======================================================================
+#                           Скрипты
+#=======================================================================
+  script:
+    yandex_test_text:
+      sequence:
+      - service: tts.yandex_station_say
+        entity_id: media_player.yandex_station
+        data:
+          message: Внимание! Важное сообщение...
+          options:
+            volume_level: 0.8
+
+    # Обновить список покупок        
+    update_shopping_list:
+      sequence:
+        - service: media_player.volume_mute
+          data:
+            entity_id: media_player.yandex_station
+            is_volume_muted: true
+        - service: media_player.play_media
+          entity_id: media_player.yandex_station
+          data:
+            media_content_id: update
+            media_content_type: shopping_list
+        - service: media_player.play_media
+          entity_id: media_player.yandex_station
+          data:
+            media_content_id: Стоп
+            media_content_type: command
+        - service: media_player.volume_mute
+          data:
+            entity_id: media_player.yandex_station
+            is_volume_muted: false

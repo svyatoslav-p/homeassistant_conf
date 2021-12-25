@@ -114,16 +114,26 @@ media_kodi:
     #========================================================================================================
     
     # Включение канала при возвращении домой с работы
-    kodi_tv_ch_returned_home_from_work:
+    kodi_tv_ch_paramaunt_hd:
       sequence:
-        - alias: Kodi play TV channel
+        - alias: Kodi play TV channel Paramount Comedy HD
           service: media_player.play_media
           data_template:
             entity_id: media_player.serv_ds_1100
             # The type of the content to play. Must be one of MUSIC, TVSHOW, VIDEO, EPISODE, CHANNEL or PLAYLIST
             media_content_type: "CHANNEL"
             # Paramount Comedy HD
-            media_content_id: 128
+            media_content_id: 176
+    kodi_tv_ch_history:
+      sequence:
+        - alias: Kodi play TV channel History HD
+          service: media_player.play_media
+          data_template:
+            entity_id: media_player.serv_ds_1100
+            # The type of the content to play. Must be one of MUSIC, TVSHOW, VIDEO, EPISODE, CHANNEL or PLAYLIST
+            media_content_type: "CHANNEL"
+            # History HD
+            media_content_id: 164
 
     # Быстрое включение ТВ
     kodi_tv_ch_fast_play:
@@ -133,7 +143,7 @@ media_kodi:
             entity_id: media_player.serv_ds_1100
             media_content_type: "CHANNEL"
             # Paramount Comedy HD
-            media_content_id: 128
+            media_content_id: 176
 
   #=======================================================================
   #                           Shell Command

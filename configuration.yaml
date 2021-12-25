@@ -33,6 +33,9 @@ python_script:
 # SmartIR
 smartir:
   check_updates: false 
+
+# Яндекс Smart Home (Алиса)
+yandex_smart_home: !include includes/yandex_smart_home.yaml
   
 #=======================================================================
 #                      Подключение Telegram

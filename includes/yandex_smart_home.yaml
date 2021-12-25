@@ -1,0 +1,141 @@
+  notifier:
+    - oauth_token: !secret yandex_smart_token
+      skill_id: !secret yandex_smart_skill_id
+      user_id: !secret id_ha_user_svyatoslav
+  filter:
+    include_entities:
+      # Освещение
+      - light.bathroom_spotlight_group
+      - light.hallway_spotlight_group
+      - light.kitchen_spotlight_group
+
+      - light.lamp_bedroom
+      - light.sw_kitchen_lamp
+      - light.sw_loggia
+
+      - light.led_kitchen
+      - light.led_bedroom
+
+      # Скрипты
+      - script.all_turn_off_dev
+      - script.action_returned_home_from_work
+
+      # Сенсоры
+      - sensor.sn_tempr_hum_bathroom_temperature
+      - sensor.sn_tempr_hum_bedroom_temperature
+      - sensor.sn_tempr_hum_bathroom_humidity
+      - sensor.sn_tempr_hum_bedroom_humidity
+
+      - media_player.lg_smart_tv
+      - media_player.serv_ds_1100
+
+       # Прочее
+      - switch.sw_double_hood_fan_switch_left
+      - climate.air_conditioner
+      - group.water_close_tap_hot_cold
+      - group.water_open_tap_hot_cold
+  # Переопределение сущностей    
+  entity_config:
+    #Освещение
+    light.bathroom_spotlight_group:
+      name: Свет
+      room: Ванная
+      type: devices.types.light
+    light.hallway_spotlight_group:
+      name: Свет
+      room: Прихожая
+      type: devices.types.light
+    light.kitchen_spotlight_group:
+      name: Свет
+      room: Кухня
+      type: devices.types.light
+    light.lamp_bedroom:
+      name: Люстра
+      room: Спальня
+      type: devices.types.light
+    light.led_kitchen:
+      name: Подсветка
+      room: Кухня
+      type: devices.types.light
+    light.led_bedroom:
+      name: Подсветка
+      room: Спальня
+      type: devices.types.light
+    light.sw_kitchen_lamp:
+      name: Люстра
+      room: Кухня
+      type: devices.types.light
+    light.sw_loggia:
+      name: Свет
+      room: Лоджия
+      type: devices.types.light
+    # Скрипты
+    script.all_turn_off_dev:
+      name: Все ушли
+      room: Прихожая
+    script.action_returned_home_from_work:
+      name: Я дома
+      room: Прихожая
+    # Сенсоры
+    sensor.sn_tempr_hum_bathroom_temperature:
+      name: Температура
+      room: Ванная
+      type: devices.types.sensor
+    sensor.sn_tempr_hum_bedroom_temperature:
+      name: Температура
+      room: Спальня
+      type: devices.types.sensor
+    sensor.sn_tempr_hum_bathroom_humidity:
+      name: Влажность
+      room: Ванная
+      type: devices.types.sensor
+    sensor.sn_tempr_hum_bedroom_humidity:
+      name: Влажность
+      room: Спальня
+      type: devices.types.sensor
+      
+    # Прочее
+    switch.sw_double_hood_fan_switch_left:
+      name: Вытяжка
+      room: Ванная
+      type: devices.types.switch
+    group.water_close_tap_hot_cold:
+      name: Закрыть воду
+      room: Ванная
+      type: devices.types.switch
+    group.water_open_tap_hot_cold:
+      name: Открыть воду
+      room: Ванная
+      type: devices.types.switch
+    climate.air_conditioner:
+      name: Кондиционер
+      room: Спальня
+      type: devices.types.thermostat.ac
+    
+    media_player.lg_smart_tv:
+      name: Телевизор
+      room: Спальня
+      type: devices.types.media_device.tv
+      turn_on:
+        service: script.fast_tv_on
+      turn_off:
+        service: script.fast_tv_off
+    media_player.serv_ds_1100:
+      name: Приставка
+      room: Спальня
+      type: devices.types.media_device.tv_box
+      custom_ranges:
+        channel:
+          set_value:
+            service: media_player.play_media
+            entity_id: media_player.serv_ds_1100
+            data:
+              media_content_type: channel
+              media_content_id: '{{ value }}'
+          increase_value:
+            service: script.kodi_up
+          decrease_value:
+            service: script.kodi_down
+          range:
+            min: 0
+            max: 252

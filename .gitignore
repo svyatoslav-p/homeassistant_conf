@@ -18,3 +18,7 @@
 /webostv.conf
 /includes/packages/_test.yaml
 
+ui-lovelace.yaml
+.shopping_list.json
+home-assistant.log.1
+home-assistant.log.fault
