@@ -233,9 +233,6 @@ views:
               - entity: sensor.time_date
                 name: Время, дата сервера
               - type: divider
-              - entity: sensor.last_backup_system_rpi
-                name: Последняя копия
-                icon: mdi:buffer
               - type: divider
               - entity: sensor.ipv4_address_enp11s0
                 name: Адрес в сети
@@ -255,57 +252,28 @@ views:
             content: '**ZigBee**'
           - type: markdown
             content: '**Шлюз Gateway 3**'
-          - type: grid
-            columns: 3
-            square: false
-            cards:
-              - type: custom:button-card
-                name: Перезагрузить
-                icon: mdi:restart
-                styles:
-                  card:
-                    - font-size: 12px
-                tap_action:
-                  action: call-service
-                  service: script.turn_on
-                  service_data:
-                    entity_id: script.reboot_gateway3
-              - type: custom:button-card
-                entity: remote.0x588e81fffedaba82_pair
-                name: Режим сопряжения
-                styles:
-                  card:
-                    - font-size: 12px
-                tap_action:
-                  action: call-service
-                  service: remote.toggle
-                  service_data:
-                    entity_id: remote.0x588e81fffedaba82_pair
-              - type: custom:button-card
-                name: Запуск ftp
-                icon: mdi:lan
-                styles:
-                  card:
-                    - font-size: 12px
-                tap_action:
-                  action: call-service
-                  service: script.turn_on
-                  service_data:
-                    entity_id: script.ftp_gateway3
           - type: glance
             entities:
-              - entity: sensor.last_boot_gw3
+              - entity: sensor.gw3_uptime
                 name: Онлайн в сети
                 icon: mdi:clock
               - entity: sensor.gw3_free_mem
                 name: Свободно памяти
               - entity: sensor.gw3_rssi
                 name: RSSI
+          - type: grid
+            square: false
+            columns: 1
+            cards:
+              - type: entities
+                entities:
+                  - entity: select.54ef44c862e6_command
+                    name: Command
+                  - entity: select.54ef44c862e6_data
+                    name: Data
           - type: entities
             show_header_toggle: false
             entities:
-              - entity: sensor.gw3_online
-                name: Онлайн в HA
               - entity: sensor.gw3_radio_channel
                 name: Канал ZigBee
               - entity: sensor.gw3_radio_tx_power

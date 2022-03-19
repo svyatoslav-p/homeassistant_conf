@@ -197,12 +197,6 @@ system_monitor_cmd:
     #           Проблемы с питанием
     #         {% endif %}
 
-    # Последний бэкап полной системы. Читаем дату изменения файла бэкапа, но успешен ли он или нет не знаем
-    - platform: command_line
-      name: last_backup_system_rpi
-      command: "ssh serv@192.168.1.7 stat --printf '%y' /mnt/pi_shared/sys/backup/rpi/rpi_backup.img | awk '{print $1}'"
-      scan_interval: 180
-
     # Статистика объектов в системе
     - platform: template
       sensors:

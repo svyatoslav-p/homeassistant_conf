@@ -30,87 +30,32 @@ gateway_3:
   sensor:
     - platform: template
       sensors:
-        # Время он-лайн в HA
-        gw3_online:
-          value_template: >
-            {% set uptime = ((as_timestamp(now()) | int - as_timestamp(states('sensor.0x588e81fffedaba82_gateway')) | int)/60) | int %}
-            {% set minutes = (( uptime % 60) / 1) | int %}
-            {% set hours = ((uptime % 1440) / 60) | int %}
-            {% set days = (uptime / 1440) | int %}
-              {% if uptime < 1 %}
-                Меньше минуты
-              {% else %}
-                {% if days > 0 %}
-                  {{ days }} д.
-                {% endif %}
-                {% if hours > 0 %}
-                  {% if days > 0 %}
-                    {{ ' ' }}
-                  {% endif %}
-                  {{ hours }} ч.
-                {% endif %}
-                {% if minutes > 0 %}
-                  {% if days > 0 or hours > 0 %}
-                    {{ ' ' }}
-                  {% endif %}
-                    {{ minutes }} мин.
-                {% endif %}
-              {% endif %}
-          icon_template: mdi:av-timer
         # Мощность передатчика 
         gw3_radio_tx_power:
-          value_template: "{{state_attr('sensor.0x588e81fffedaba82_gateway','radio_tx_power')|int}}"
+          value_template: "{{state_attr('binary_sensor.54ef44c862e6_gateway','radio_tx_power')|int}}"
           icon_template: mdi:transmission-tower
           unit_of_measurement: ''
         # Активный канал
         gw3_radio_channel:
-          value_template: "{{state_attr('sensor.0x588e81fffedaba82_gateway','radio_channel')|int}}"
+          value_template: "{{state_attr('binary_sensor.54ef44c862e6_gateway','radio_channel')|int}}"
           icon_template: mdi:signal-cellular-2
           unit_of_measurement: ''
         # Свободно памяти
         gw3_free_mem:
-          value_template: "{{state_attr('sensor.0x588e81fffedaba82_gateway','free_mem')|int}}"
+          value_template: "{{state_attr('binary_sensor.54ef44c862e6_gateway','free_mem')|int}}"
           icon_template: mdi:memory
           unit_of_measurement: 'Kb'
         # Уровень Wi-Fi
         gw3_rssi:
-          value_template: "{{state_attr('sensor.0x588e81fffedaba82_gateway','rssi')|int}}"
+          value_template: "{{state_attr('binary_sensor.54ef44c862e6_gateway','rssi')|int}}"
           icon_template: mdi:access-point-network
           unit_of_measurement: 'dB'
-    # Время в сети WI-FI
-    - platform: command_line
-      name: gw3_uptime
-      command: "ssh admin@192.168.1.119 cat /proc/uptime | awk '{print $1}'"
 
-    # Перевод gw3_uptime в читаемый вид
-    - platform: template
-      sensors:
-        last_boot_gw3:
-          value_template: >
-            {% set uptime = states('sensor.gw3_uptime') | int %}
-            {% set minutes = (( uptime % 3600) / 60) | int %}
-            {% set hours = ((uptime % 86400) / 3600) | int %}
-            {% set days = (uptime / 86400) | int %}
-              {% if uptime < 1 %}
-                Меньше минуты
-              {% else %}
-                {% if days > 0 %}
-                  {{ days }} д.
-                {% endif %}
-                {% if hours > 0 %}
-                  {% if days > 0 %}
-                    {{ ' ' }}
-                  {% endif %}
-                  {{ hours }} ч.
-                {% endif %}
-                {% if minutes > 0 %}
-                  {% if days > 0 or hours > 0 %}
-                    {{ ' ' }}
-                  {% endif %}
-                    {{ minutes }} мин.
-                {% endif %}
-              {% endif %}
-          icon_template: mdi:clock 
+        gw3_uptime:
+          value_template: "{{state_attr('binary_sensor.54ef44c862e6_gateway','uptime')}}"
+          icon_template: mdi:clock
+          unit_of_measurement: ''
+
 #=======================================================================
 #                            Бинарные сенсоры
 #=======================================================================
@@ -127,12 +72,6 @@ gateway_3:
       sequence:
       - service: shell_command.restart_gw3
 
-    ftp_gateway3:
-      sequence:
-      - service: remote.send_command
-        entity_id: remote.0x588e81fffedaba82_pair
-        data:
-          command: ftp
   #=======================================================================
   #                           Shell Command
   #=======================================================================
